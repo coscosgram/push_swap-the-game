@@ -18,8 +18,8 @@
 
 ## Créditos / Credits
 
-**ES** · Creado por **David Costa Pradillo (Cos)**, estudiante de 42 Madrid. GitHub: [@coscosgram](https://github.com/coscosgram).
+**ES** · Creado por **David Costa Pradillo (Cos)**, estudiante de 42 Madrid. GitHub: [@coscosgram](https://github.com/coscosgram) · [LinkedIn](https://www.linkedin.com/in/david-costa-pradillo-8a580965).
 Proyecto `push_swap` de 42 © 42 School; este juego es un material de estudio no oficial.
 
-**EN** · Created by **David Costa Pradillo (Cos)**, 42 Madrid student. GitHub: [@coscosgram](https://github.com/coscosgram).
+**EN** · Created by **David Costa Pradillo (Cos)**, 42 Madrid student. GitHub: [@coscosgram](https://github.com/coscosgram) · [LinkedIn](https://www.linkedin.com/in/david-costa-pradillo-8a580965).
 The `push_swap` project belongs to 42 School; this game is unofficial study material.
