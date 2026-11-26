@@ -1,0 +1,1086 @@
+<title>Muelle Push Swap</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&family=Special+Elite&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Concepto: muelle en pixel art. Grúas amarillas, cables de acero, LEDs, palancas, megafonía ámbar y notas impresas en papel continuo. */
+:root{
+  --bg:#cfcdc3;--grain:rgba(0,0,0,.07);--surface:#e2e0d6;--surface-2:#c6c7c0;--paper:#f4eed9;--paper-2:#e4dcbf;--hole:#cfcdc3;
+  --ink:#1e2225;--ink-2:#525a60;--line:#80888d;--edge:#1e2225;--shadow:rgba(30,34,37,.5);
+  --accent:#a8480a;--accent-ink:#1a1408;--hazard:#f5b800;--hazard-d:#9c6f00;--steel:#7d868c;--steel-d:#3b4248;--rivet:#8c9499;
+  --good:#1b7a38;--bad:#b3261e;--led-g:#38d864;--led-r:#ff4538;--led-a:#ffb21a;
+  --code-bg:#17191c;--code-fg:#e8e5d8;--floor:#b9bab2;--tear:#4fb6c9;--face-bg:#2c3135;
+  --c1:#b5472a;--c2:#3f7f5c;--c3:#dc9b1c;--c4:#8c9196;
+  --sk1:#f6e3b0;--sk2:#f2cf93;--sk3:#ebb87a;--wt1:#5b7573;--wt2:#4a6361;--wt3:#3c5352;--conc:#a9aaa2;--concd:#8f9088;--hull:#a53a25;--hulld:#7d2b1b;--cloud:#fff3d6;
+  --bar-s:65%;--bar-l:42%;--bar-fg:#ffffff;
+  --paper-ink:#2b2a26;
+  --f-pix:"Pixelify Sans",system-ui,sans-serif;--f-body:"Pixelify Sans",system-ui,sans-serif;--f-mono:"Pixelify Sans",ui-monospace,Menlo,Consolas,monospace;
+  --f-code:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;--f-led:"VT323","Courier New",monospace;--f-paper:"Special Elite","Courier New",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14161a;--grain:rgba(255,255,255,.035);--surface:#22262b;--surface-2:#2d3339;--paper:#e6dec2;--paper-2:#d1c8a8;--hole:#14161a;
+  --ink:#ecebe2;--ink-2:#a8afb4;--line:#5a636a;--edge:#3f474e;--shadow:rgba(0,0,0,.7);
+  --accent:#ffb21a;--hazard:#ffc21a;--steel:#6b747a;--steel-d:#1b1e22;--rivet:#59626a;--good:#5fe08a;--bad:#ff6b5f;
+  --code-bg:#0c0e10;--floor:#1d2024;--tear:#56c3d6;--face-bg:#101214;--c1:#c9553a;--c2:#4a9669;--c3:#e8aa2a;--c4:#9aa0a5;
+  --sk1:#1b1a24;--sk2:#2a2029;--sk3:#3d2a2c;--wt1:#2b3f3e;--wt2:#22302f;--wt3:#1b2828;--conc:#3a3d40;--concd:#2d3033;--hull:#8e3322;--hulld:#64241a;--cloud:#3d3544;
+  --bar-l:50%;--bar-fg:#101214;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14161a;--grain:rgba(255,255,255,.035);--surface:#22262b;--surface-2:#2d3339;--paper:#e6dec2;--paper-2:#d1c8a8;--hole:#14161a;
+  --ink:#ecebe2;--ink-2:#a8afb4;--line:#5a636a;--edge:#3f474e;--shadow:rgba(0,0,0,.7);
+  --accent:#ffb21a;--hazard:#ffc21a;--steel:#6b747a;--steel-d:#1b1e22;--rivet:#59626a;--good:#5fe08a;--bad:#ff6b5f;
+  --code-bg:#0c0e10;--floor:#1d2024;--tear:#56c3d6;--face-bg:#101214;--c1:#c9553a;--c2:#4a9669;--c3:#e8aa2a;--c4:#9aa0a5;
+  --sk1:#1b1a24;--sk2:#2a2029;--sk3:#3d2a2c;--wt1:#2b3f3e;--wt2:#22302f;--wt3:#1b2828;--conc:#3a3d40;--concd:#2d3033;--hull:#8e3322;--hulld:#64241a;--cloud:#3d3544;
+  --bar-l:50%;--bar-fg:#101214;color-scheme:dark}
+*{box-sizing:border-box}
+body,button,input,select{font-variant-ligatures:none}
+*,*::before,*::after{border-radius:0!important}
+body{background:var(--bg);background-image:radial-gradient(var(--grain) 1px,transparent 1.5px);background-size:8px 8px;color:var(--ink);font:17px/1.5 var(--f-body);padding-block:12px 60px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto}
+h2,h3,h4{font-family:var(--f-pix);font-weight:600;text-wrap:balance}
+button{font:inherit;color:inherit}
+svg{shape-rendering:crispEdges}
+:focus-visible{outline:3px solid var(--hazard);outline-offset:2px}
+code{font:13px var(--f-code);background:var(--surface-2);padding:1px 5px}
+/* cabecera */
+.top{display:flex;gap:14px 28px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:12px 14px;background:var(--surface);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--shadow);position:relative}
+.brand{display:flex;gap:14px;align-items:center;min-width:0}
+.brand h1{font:24px/1.3 var(--f-pix);margin:0;color:var(--ink);text-shadow:3px 3px 0 var(--hazard);text-transform:uppercase}
+.brand small{display:block;font:17px/1.2 var(--f-led);color:var(--ink-2);margin-top:8px;letter-spacing:.02em}
+.prog{display:flex;flex-direction:column;gap:5px;min-width:min(260px,100%);font:16px var(--f-led);color:var(--ink-2);letter-spacing:.04em}
+.prog div:first-child{display:flex;justify-content:space-between;gap:12px}
+.meter{height:16px;background:var(--steel-d);border:3px solid var(--edge);position:relative}
+.meter::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 8px,rgba(0,0,0,.55) 8px 10px);pointer-events:none}
+.meter i{display:block;height:100%;width:0;background:var(--led-a);transition:width .4s steps(10)}
+/* remaches */
+.riv{position:relative}
+.riv::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(var(--rivet),var(--rivet)) left 5px top 14px/4px 4px no-repeat,linear-gradient(var(--rivet),var(--rivet)) right 5px top 14px/4px 4px no-repeat,
+  linear-gradient(var(--rivet),var(--rivet)) left 5px bottom 5px/4px 4px no-repeat,linear-gradient(var(--rivet),var(--rivet)) right 5px bottom 5px/4px 4px no-repeat}
+/* navegación */
+.shell{display:flex;flex-direction:column;gap:22px;margin-top:22px}
+.nav{position:relative;z-index:5}
+.nav button{display:flex;gap:10px;align-items:center;text-align:left;border:3px solid var(--edge);background:var(--surface);padding:8px 12px;cursor:pointer;width:100%}
+.nav button:hover{background:var(--surface-2)}
+.nav .n{font:700 21px var(--f-pix);color:#1b1b1b;width:28px;height:28px;display:grid;place-items:center;background:var(--hazard);border:2px solid var(--edge);flex:0 0 auto}
+.nav .t{flex:1;min-width:0;font-weight:600;font-size:16px;line-height:1.2}
+.nav .t small{display:block;font-weight:400;font-size:15px;color:var(--ink-2)}
+.nav .st{font:16px var(--f-led);color:var(--ink-2)}
+.nav button.complete .st{color:var(--good)}
+.nav button[aria-current="true"]{background:var(--steel-d);color:#f1efe4;border-color:var(--hazard)}
+.nav button[aria-current="true"] .t small,.nav button[aria-current="true"] .st{color:#c9cdd0}
+.menu summary{list-style:none;display:flex;gap:12px;align-items:center;border:3px solid var(--edge);background:var(--surface);padding:8px 12px;cursor:pointer;box-shadow:4px 4px 0 var(--shadow)}
+.menu summary::-webkit-details-marker{display:none}
+.menu summary .n{font:700 21px var(--f-pix);color:#1b1b1b;width:28px;height:28px;display:grid;place-items:center;background:var(--hazard);border:2px solid var(--edge);flex:0 0 auto}
+.menu summary .t{flex:1;min-width:0;font-weight:600;font-size:16px;line-height:1.2}
+.menu summary .t small{display:block;font-weight:400;font-size:15px;color:var(--ink-2)}
+.menu summary .st,.menu summary .car{font:17px var(--f-led);color:var(--ink-2);white-space:nowrap}
+.menu summary .car{background:var(--hazard);color:#1b1b1b;padding:1px 8px;border:2px solid var(--edge)}
+.menu[open] summary{border-color:var(--hazard)}
+.mlist{position:absolute;left:0;right:0;top:calc(100% + 8px);background:var(--bg);border:3px solid var(--edge);padding:8px;display:flex;flex-direction:column;gap:8px;max-height:70vh;overflow-y:auto;box-shadow:6px 6px 0 var(--shadow)}
+.panel{display:flex;flex-direction:column;gap:24px;min-width:0}
+.mn{font:16px var(--f-pix);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.mh h2{font:700 clamp(24px,5.5vw,36px)/1.15 var(--f-pix);text-transform:uppercase;margin:8px 0 6px;color:var(--ink);text-shadow:2px 2px 0 var(--hazard)}
+.sub{margin:0;color:var(--ink-2)}
+/* megafonía */
+.radio{display:grid;grid-template-columns:auto 1fr;gap:14px;background:#17191b;color:#ffc247;border:3px solid var(--edge);padding:22px 16px 16px;box-shadow:4px 4px 0 var(--shadow)}
+.radio::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 10px,#1b1b1b 10px 20px)}
+.spk{width:64px;flex:0 0 auto;padding-top:4px}
+.spk svg{width:100%;display:block}
+.spk .wv{animation:wave 1s steps(1) infinite}.spk .wv2{animation-delay:.33s}.spk .wv3{animation-delay:.66s}
+@keyframes wave{0%{opacity:.15}33%{opacity:1}100%{opacity:.15}}
+.pa-h{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:center;font:14px/1.6 var(--f-pix);letter-spacing:.04em;color:#c9c3a8}
+.pa-h small{font:16px var(--f-led);letter-spacing:.02em;color:#8d907f}
+.led{display:inline-block;width:10px;height:10px;background:var(--led-r);box-shadow:0 0 8px var(--led-r);animation:blink 1.2s steps(1) infinite}
+@keyframes blink{50%{opacity:.25;box-shadow:none}}
+.radio p{margin:6px 0 0;font:22px/1.25 var(--f-led);letter-spacing:.03em;text-shadow:0 0 7px rgba(255,178,26,.45);max-width:74ch}
+.radio p.chime{font:22px var(--f-pix);color:#ffe29a;margin:10px 0 0;letter-spacing:.1em}
+.radio p.clic{font-size:17px;color:#8d907f;text-shadow:none;margin-top:6px}
+.radio i{font-style:normal;color:#8ff0a4;text-shadow:0 0 7px rgba(143,240,164,.4)}
+.sec{display:flex;flex-direction:column;gap:14px;min-width:0}
+.sec h3{margin:0;font-size:12px;line-height:1.6;text-transform:uppercase;padding-bottom:12px;background:repeating-linear-gradient(135deg,var(--steel) 0 3px,var(--steel-d) 3px 6px) left bottom/100% 6px no-repeat}
+/* notas en papel continuo */
+.sec>p,.goal,.term,.card,.q,.checks label{font:15px/1.5 var(--f-paper);color:var(--paper-ink);background:var(--paper);box-shadow:3px 3px 0 var(--shadow)}
+.sec>p{max-width:72ch;padding:12px 14px 12px 40px;position:relative;margin:0;
+  background:radial-gradient(circle at 11px 11px,var(--hole) 4px,transparent 4.5px) 0 0/26px 22px repeat-y,
+  repeating-linear-gradient(180deg,#a89f82 0 4px,transparent 4px 8px) 27px 0/1px 100% no-repeat,
+  linear-gradient(90deg,var(--paper-2) 0 27px,transparent 27px),var(--paper)}
+.sec>p code,.term code,.card code{background:var(--paper-2);color:var(--paper-ink)}
+.sec>p i{font-style:normal;background:linear-gradient(transparent 55%,rgba(245,184,0,.5) 55%)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px}
+.card{padding:16px 14px 12px;position:relative;border-bottom:3px dashed #a89f82}
+.card::before{content:"";position:absolute;left:50%;top:-6px;width:12px;height:12px;margin-left:-6px;background:var(--led-r);box-shadow:inset -3px -3px 0 rgba(0,0,0,.3),0 3px 0 rgba(0,0,0,.25)}
+.card:nth-child(odd){transform:rotate(-.5deg)}.card:nth-child(even){transform:rotate(.4deg)}
+.card h4{margin:0 0 8px;font:16px/1.5 var(--f-pix);text-transform:uppercase;color:var(--paper-ink)}
+.card p{margin:0;font-size:14px}
+.term{max-width:72ch;padding:10px 14px;border:2px dashed #8f876c}
+.term b{font:14px var(--f-pix);text-transform:uppercase;letter-spacing:.04em;margin-right:8px;background:var(--paper-ink);color:var(--paper);padding:3px 6px;display:inline-block;margin-bottom:4px}
+.goal{padding:10px 14px;border-left:8px solid var(--hazard)}
+.goal .mono{font:13px var(--f-paper);color:#6a644f}
+pre.code{background:var(--code-bg);color:var(--code-fg);border:3px solid var(--edge);padding:12px 14px;overflow-x:auto;font:13px/1.55 var(--f-code);margin:0;box-shadow:3px 3px 0 var(--shadow);
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.03) 0 2px,transparent 2px 4px)}
+.code .c{color:#8a9096}.code .s{color:#c9d98a}.code .k{color:#ffb454}.code .t{color:#7fd6b8}.code .n{color:#f0cf6a}
+.code .blank{background:#d9461f;color:#fff;padding:0 6px}
+.btn{font:16px/1.4 var(--f-pix);background:var(--hazard);color:#1b1b1b;border:3px solid var(--edge);padding:10px 14px;cursor:pointer;box-shadow:0 4px 0 var(--hazard-d),0 4px 0 3px var(--edge);margin-bottom:4px;text-transform:uppercase}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--hazard-d),0 1px 0 3px var(--edge)}
+.btn.ghost{background:var(--surface);color:var(--ink);box-shadow:0 4px 0 var(--steel),0 4px 0 3px var(--edge)}
+.btn:disabled{opacity:.5;cursor:default}
+/* paneles de metal */
+.sim,.tool,.stat,.track{background:var(--surface);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--shadow);position:relative}
+.sim,.tool{padding:20px 14px 14px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.sim::before,.track::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 10px,#1b1b1b 10px 20px)}
+.sim-head{display:flex;justify-content:space-between;align-items:baseline;gap:6px 16px;flex-wrap:wrap}
+.count{font:17px var(--f-led);color:var(--ink-2);letter-spacing:.05em;text-transform:uppercase}
+.count b{font:32px var(--f-pix);margin:0 8px;background:var(--steel-d);color:var(--led-a);padding:4px 8px;border:2px solid var(--edge);display:inline-block;letter-spacing:.04em}
+.status{font:18px var(--f-led);letter-spacing:.04em;display:flex;align-items:center;gap:8px}
+.status::before{content:"";width:10px;height:10px;background:var(--led-a);box-shadow:0 0 6px var(--led-a)}
+.status.ok{color:var(--good)}.status.ok::before{background:var(--led-g);box-shadow:0 0 8px var(--led-g)}
+.stacks{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stacks.shake{animation:sh .25s steps(4)}
+@keyframes sh{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.col{min-width:0}
+.col h4{margin:0 0 8px;font:13px/1.5 var(--f-pix);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);display:flex;justify-content:space-between;gap:6px}
+.stack{height:300px;background-color:var(--floor);border:3px solid var(--edge);border-bottom:8px solid var(--hazard);padding:6px;display:flex;flex-direction:column;gap:3px;overflow:hidden;
+  background-image:repeating-linear-gradient(0deg,transparent 0 38px,rgba(0,0,0,.08) 38px 40px)}
+.stack.big{gap:0}
+.bar{flex:1 1 0;max-height:34px;min-height:1px;border:0;background:hsl(var(--h) var(--bar-s) var(--bar-l));color:var(--bar-fg);display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 6px;font:600 15px var(--f-mono);overflow:hidden;
+  background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 2px,transparent 2px 8px);box-shadow:inset 0 0 0 2px rgba(0,0,0,.4),inset 0 3px 0 rgba(255,255,255,.18)}
+.bar .lab{display:flex;align-items:center;gap:5px;min-width:0}
+.bar .lab svg{height:20px;width:auto;flex:0 0 auto}
+.bar .bin{font-weight:400;font-size:13px;opacity:.85;font-family:var(--f-code)}
+button.bar{cursor:pointer;min-height:30px;flex:0 0 auto}
+.empty{margin:auto;color:var(--ink-2);font:17px var(--f-led)}
+.gantry{height:26px;border-bottom:4px solid var(--hazard-d);position:relative;margin-top:-2px;background:repeating-linear-gradient(90deg,transparent 0 10px,rgba(0,0,0,.15) 10px 12px)}
+.gantry i{position:absolute;top:0;left:25%;width:3px;height:20px;background:var(--steel-d);transition:left .25s steps(5)}
+.gantry i::after{content:"";position:absolute;left:-8px;bottom:-4px;width:19px;height:10px;background:var(--hazard);border:2px solid var(--edge)}
+.ops{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.og{display:flex;flex-direction:column;gap:6px}
+.og small{font:13px var(--f-pix);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2)}
+.og div{display:flex;gap:8px;flex-wrap:wrap}
+.op{font:16px var(--f-pix);padding:9px 10px 9px 8px;border:3px solid var(--edge);background:var(--steel-d);color:#f1efe4;cursor:pointer;min-width:54px;display:inline-flex;align-items:center;gap:7px;box-shadow:0 4px 0 #000;margin-bottom:4px}
+.op::before{content:"";width:8px;height:8px;background:var(--led-r);box-shadow:0 0 5px var(--led-r)}
+.op:hover{background:var(--steel)}
+.op:active{transform:translateY(3px);box-shadow:0 1px 0 #000}
+.op:active::before{background:var(--led-g);box-shadow:0 0 6px var(--led-g)}
+.log{display:flex;flex-wrap:wrap;gap:4px;min-height:24px;font:15px var(--f-led)}
+.log span{background:var(--steel-d);color:var(--led-a);padding:0 6px;border:1px solid var(--edge)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sel,.inp{font:16px var(--f-mono);padding:7px 10px;border:3px solid var(--edge);background:var(--paper);color:var(--paper-ink);min-width:0}
+.inp{flex:1 1 220px}
+.lbl{font:14px var(--f-pix);letter-spacing:.04em;color:var(--ink-2);text-transform:uppercase}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:3px solid var(--edge);background:var(--surface);padding:7px 12px;cursor:pointer;font:16px var(--f-pix)}
+.tab[aria-pressed="true"]{background:var(--hazard);color:#1b1b1b}
+.tab.ok::after{content:" ✓"}
+.res{padding:10px 12px;font:15px/1.5 var(--f-paper);border:3px solid var(--edge);background:var(--paper);color:var(--paper-ink)}
+.res.good{border-color:var(--good)}.res.bad{border-color:var(--bad)}
+.res b{font-family:var(--f-code)}
+.scroll{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font:16px var(--f-mono)}
+.tbl th,.tbl td{padding:6px 8px;border-bottom:2px solid var(--line);text-align:left;white-space:nowrap}
+.tbl tr.best td{background:color-mix(in srgb,var(--good) 22%,transparent)}
+.q{padding:16px 14px 14px;display:flex;flex-direction:column;gap:10px;min-width:0;position:relative}
+.q::before{content:"";position:absolute;inset:0 0 auto 0;height:8px;background:repeating-linear-gradient(90deg,var(--paper-ink) 0 6px,transparent 6px 12px);opacity:.25}
+.qh{display:flex;justify-content:space-between;font:13px var(--f-pix);letter-spacing:.04em;text-transform:uppercase;color:#6a644f}
+.qt{margin:0;font-weight:700;font-size:16px}
+.opts{display:grid;gap:8px}
+.opt{text-align:left;border:3px solid var(--paper-ink);background:#fffbea;color:var(--paper-ink);padding:8px 12px;cursor:pointer;font:15px/1.4 var(--f-paper)}
+.opt:hover:not(:disabled){background:var(--hazard)}
+.opt.right{border-color:var(--good);background:#cfe9bf}
+.opt.wrong{border-color:var(--bad);background:#f3c9c1;opacity:.85}
+.fb{font:15px/1.45 var(--f-paper);min-height:1px}.fb.ok{color:#1b6a32}
+.fb i{font-style:normal;display:block;margin-top:6px;padding:6px 10px;background:#17191c;color:#ffc247;font:19px/1.2 var(--f-led);letter-spacing:.03em}
+.chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:15px var(--f-code)}
+.chain .nd{display:inline-flex;border:3px solid var(--edge);overflow:hidden;background:var(--surface)}
+.chain .nd i{font-style:normal;padding:5px 10px}.chain .nd i+i{border-left:3px solid var(--edge);background:var(--hazard);color:#1b1b1b}
+.chain .ptr{border:3px dashed var(--accent);padding:5px 10px;color:var(--accent);font-weight:600}
+.cases{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.case{background:var(--surface);border:3px solid var(--edge);padding:8px 10px;font:15px var(--f-mono)}
+.case b{display:block;margin-bottom:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px}
+.stat{padding:14px;display:flex;flex-direction:column;gap:4px}
+.stat b{font:32px/1.3 var(--f-pix)}.stat span,.stat small{font:16px var(--f-led);color:var(--ink-2);letter-spacing:.03em}.stat em{font-style:normal;font-weight:600}
+.checks{display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;cursor:pointer}
+.checks input{margin-top:4px;accent-color:var(--hazard-d);width:16px;height:16px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));background:#17191c;color:#ffc247;padding:8px 16px;border:3px solid var(--hazard);font:20px var(--f-led);letter-spacing:.04em;z-index:20}
+/* puerto */
+.harbor{margin-top:16px;border:3px solid var(--edge);box-shadow:4px 4px 0 var(--shadow);overflow:hidden;height:144px;background:var(--sk1)}
+.harbor svg{display:block;width:100%;height:100%}
+.harbor .w1{animation:drift 8s steps(12) infinite}.harbor .w2{animation:drift 12s steps(12) infinite reverse}
+.harbor .cl{animation:drift 40s linear infinite alternate}
+.harbor .hang{animation:bob 2s steps(2) infinite alternate}
+.harbor .bl{animation:blink 1.4s steps(1) infinite}
+@keyframes drift{to{transform:translateX(-72px)}}
+@keyframes bob{to{transform:translateY(6px)}}
+/* marcador de lágrimas */
+.track{margin-top:18px;padding:22px 16px 10px;overflow:hidden}
+.tr-top{display:flex;gap:16px;align-items:center;padding-top:4px}
+.tr-icon{flex:0 0 auto;width:92px;height:92px;background:var(--steel-d);border:3px solid var(--edge);display:grid;place-items:center;color:#f1efe4;box-shadow:inset 0 0 0 3px rgba(255,255,255,.06)}
+.tr-icon svg{width:70px;height:70px}
+.tr-msg{min-width:0}
+#tl{display:block;font:700 clamp(24px,5vw,38px)/1.1 var(--f-pix);text-transform:uppercase;margin-top:6px}
+#tl.g-ok{color:var(--good)}#tl.g-mid{color:var(--ink)}#tl.g-bad{color:var(--bad)}
+.tm{margin:8px 0 0;font:18px/1.2 var(--f-led);letter-spacing:.03em;max-width:62ch}
+.tm i{font-style:normal;color:var(--accent);display:block;margin-top:2px}
+.tears-title{display:flex;align-items:center;gap:8px;margin-top:16px;font:14px var(--f-pix);letter-spacing:.04em;color:var(--ink-2)}
+.tears-row{display:flex;gap:14px;align-items:center;margin-top:8px}
+.face{flex:0 0 auto;width:104px;height:104px;border:3px solid var(--edge);background:var(--face-bg);box-shadow:4px 4px 0 var(--shadow);position:relative}
+.face svg{width:100%;height:100%;display:block}
+.face.cry{animation:sob .5s steps(2) infinite}
+@keyframes sob{50%{transform:translateY(3px)}}
+.tears{position:relative;flex:1;min-width:0;height:64px;border:3px solid var(--edge);background:var(--steel-d);overflow:hidden}
+.tfill{position:absolute;inset:0 auto 0 0;width:0;overflow:hidden;background:linear-gradient(180deg,color-mix(in srgb,var(--tear) 70%,#fff) 0 30%,var(--tear) 30%);transition:width .9s steps(12)}
+.tfill::after{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.6),rgba(255,255,255,.6)),linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,.45));background-size:6px 6px,6px 6px;background-position:10px 8px,34px 38px;background-repeat:no-repeat;animation:fizz 2.4s steps(6) infinite}
+@keyframes fizz{to{transform:translateY(-12px)}}
+.tears::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 14px,rgba(0,0,0,.45) 14px 16px);pointer-events:none}
+.tdrop{position:absolute;right:6px;top:50%;margin-top:-14px;width:21px;height:28px;animation:bob2 1s steps(2) infinite alternate;z-index:1}
+@keyframes bob2{to{transform:translateY(5px)}}
+.tpct{position:absolute;inset:0;display:grid;place-items:center;font:26px var(--f-pix);color:#fff;text-shadow:2px 2px 0 #000;z-index:2}
+.tlabels{display:flex;justify-content:space-between;font:16px var(--f-led);color:var(--ink-2);margin:4px 0 0 118px}
+.tmarks{position:relative;height:50px;margin:8px 16px 4px 134px}
+.mk{position:absolute;top:0;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--ink)}
+.mk i{display:block;width:3px;height:6px;background:var(--ink-2)}
+.mk svg{width:28px;height:28px}
+.mk.past{opacity:.35;filter:grayscale(1)}
+.mk.now svg{width:42px;height:42px}
+.track.hit{animation:sh .35s steps(4)}
+@media(max-width:620px){
+  .face{width:76px;height:76px}.tears{height:50px}.tr-icon{width:72px;height:72px}.tr-icon svg{width:54px;height:54px}
+  .tlabels{margin-left:90px}.tmarks{margin:8px 10px 4px 90px}.mk svg{width:22px;height:22px}.mk.now svg{width:32px;height:32px}
+  .radio{grid-template-columns:1fr}.spk{width:44px}
+  .stacks{gap:10px}.brand h1{font-size:12px}
+}
+@media(prefers-reduced-motion:reduce){.tfill{transition:none}.tfill::after,.tdrop,.led,.spk .wv,.face.cry,.harbor *{animation:none!important}.track.hit{animation:none}.meter i,.gantry i{transition:none}.stacks.shake{animation:none}}
+</style>
+<div class="wrap">
+  <header class="top riv">
+    <div class="brand">
+      <svg width="48" height="40" viewBox="0 0 12 10" aria-hidden="true"><rect x="0" y="0" width="5" height="3" fill="var(--c1)"/><rect x="6" y="0" width="5" height="3" fill="var(--c2)"/><rect x="0" y="4" width="11" height="3" fill="var(--c3)"/><rect x="0" y="8" width="12" height="2" fill="var(--hazard)"/><rect x="0" y="0" width="5" height="1" fill="rgba(255,255,255,.35)"/><rect x="6" y="0" width="5" height="1" fill="rgba(255,255,255,.35)"/><rect x="0" y="4" width="11" height="1" fill="rgba(255,255,255,.35)"/></svg>
+      <div><h1>Muelle Push Swap</h1><small>El sueño de los gamers depende de ti, hazlo realidad</small></div>
+    </div>
+    <div class="prog"><div><span id="rank">Aprendizaje</span><span id="xp">0 XP</span></div><div class="meter"><i id="meter"></i></div></div>
+  </header>
+  <div class="harbor" aria-hidden="true"><svg id="scene" viewBox="0 0 1200 144" preserveAspectRatio="xMidYMax slice"></svg></div>
+  <section class="track riv" id="track" aria-label="Estado del envío">
+    <div class="tr-top"><div class="tr-icon" id="ti"></div><div class="tr-msg"><span class="lbl">LOS GAMERS JUEGAN A GTA VI EN</span><b id="tl">8K</b><p class="tm" id="tm" aria-live="polite"></p></div></div>
+    <div class="tears-title"><svg width="14" height="18" viewBox="0 0 7 9" aria-hidden="true"><path fill="var(--tear)" d="M3 0h1v1h1v1h1v3h1v2H6v1H5v1H2V8H1V7H0V5h1V2h1V1h1z"/></svg>LÁGRIMAS DE GAMERS</div>
+    <div class="tears-row"><div class="face" id="face" role="img" aria-label="Cara del gamer"></div>
+    <div class="tears" role="img" aria-label="Nivel de lágrimas de gamers"><div class="tfill" id="tf"><svg class="tdrop" viewBox="0 0 7 9" aria-hidden="true"><path fill="#fff" fill-opacity=".92" d="M3 0h1v1h1v1h1v3h1v2H6v1H5v1H2V8H1V7H0V5h1V2h1V1h1z"/></svg></div><div class="tpct" id="tp">0 %</div></div></div>
+    <div class="tlabels"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+    <div class="tmarks" id="stops"></div>
+  </section>
+  <div class="shell">
+    <nav class="nav" id="nav" aria-label="Misiones"></nav>
+    <main class="panel" id="stage"></main>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+<script>
+(()=>{
+'use strict';
+const KEY='muelle-push-swap-v1';
+const el=(t,c,h)=>{const n=document.createElement(t);if(c)n.className=c;if(h!=null)n.innerHTML=h;return n;};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let progress={done:{},last:0};
+try{const p=JSON.parse(localStorage.getItem(KEY));if(p&&p.done)progress=p;}catch(e){}
+progress.fails=progress.fails||0;
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(progress));}catch(e){}};
+const pickOne=a=>a[Math.floor(Math.random()*a.length)];
+const WRONG=[
+  'ATENCIÓN. Se ha caído una gráfica. Un gamer baja de resolución y no sabe por qué.',
+  'AVISO. Un gamer acaba de cerrar GTA VI y ha abierto el solitario.',
+  'ATENCIÓN, ESTUDIANTE. Es el momento de abrir esa pestaña del chat. Tranquilo, no se lo diré a nadie.',
+  'FALLO DETECTADO. Alguien en un foro acaba de escribir «esto con mi tarjeta de hace diez años iba mejor».',
+  'AVISO A LA RAMPA. Se pierde un lote de RAM. Las texturas llegan en 8 bits.',
+  'ATENCIÓN. Interesante intento. Lo estudiaremos en el museo de intentos interesantes.'
+];
+const PRAISE=[
+  'CORRECTO. Sin abrir la pestaña de la IA. Impresionante.',
+  'BIEN. Los gamers respiran y la resolución aguanta otro día.',
+  'ACIERTO. Esto sí que lo has hecho tú. Queda anotado como «hecho histórico».',
+  'CORRECTO. La RAM llega a su destino y nadie sabrá que la salvaste.',
+  'MUY BIEN. Y sin decir «me ha ayudado un poco». Mucho.'
+];
+const OVER=[
+  'AVISO. Resuelto, sí, pero con más maniobras de las necesarias. Los gamers esperan con el mando en la mano.',
+  'ATENCIÓN. Funciona. Es feo. Pero funciona. Como el código que «te ayudó un poco».',
+  'COMUNICADO. Lo has logrado… despacio. Los gamers han cambiado de hobby mientras tanto.'
+];
+const LEVELS=[
+  {n:'8K',r:'resolución 8K',k:'k8',j:'8K: se ve tanto que hasta se nota que el protagonista no se ha afeitado.'},
+  {n:'4K',r:'resolución 4K',k:'m1',j:'4K: más píxeles de los que el ojo necesita, pero los gamers lo reclamarán igual.'},
+  {n:'1080p',r:'resolución 1080p',k:'k1080',j:'1080p, ni tan mal. Tampoco es que los gamers tengan la vista perfecta.'},
+  {n:'480p',r:'resolución 480p',k:'dvd',j:'Tal resolución bajita… al menos ya no se ven los defectos visuales.'},
+  {n:'144p',r:'resolución 144p',k:'gb',j:'144p: han confundido los 144 Hz del monitor con los 144 píxeles de alto. Error de principiante.'},
+  {n:'Pixel art',r:'resolución pixel art',k:'px',j:'Pixel art: los gamers ya no saben si están jugando a GTA VI o al primer Mario.'},
+  {n:'En la tostadora',r:'resolución tostadora',k:'toast',j:'Tostadora: los gráficos son lo de menos, el desayuno está resuelto.'}
+];
+const TEARS_PER=7;
+const tearsPct=()=>Math.min(100,progress.fails*TEARS_PER);
+const lvl=()=>Math.min(LEVELS.length-1,Math.floor(tearsPct()/(100/(LEVELS.length-1))+1e-9));
+// ---------- pixel art ----------
+const PX=(w,h,body,cls)=>`<svg viewBox="0 0 ${w} ${h}" aria-hidden="true"${cls?` class="${cls}"`:''}>${body}</svg>`;
+const rc=(x,y,w,h,f,c)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${c?` class="${c}"`:''}/>`;
+const GLY={'0':'111101101101111','1':'010110010010111','2':'111001111100111','3':'111001111001111','4':'101101111001001','5':'111100111001111','6':'111100111101111','7':'111001010010010','8':'111101111101111','9':'111101111001111','K':'101101110101101','P':'111101111100100','R':'110101110101101','A':'010101111101101','M':'101111111101101','G':'011100101101011','U':'101101101101111'};
+function txt(s,x,y,u,f){let o='';[...String(s).toUpperCase()].forEach((ch,i)=>{const g=GLY[ch];if(!g)return;for(let k=0;k<15;k++)if(g[k]==='1')o+=rc(x+(i*4+k%3)*u,y+Math.floor(k/3)*u,u,u,f);});return o;}
+function monPx(label,col,u,extra){
+  const w=(label.length*4-1)*u,x=2+Math.floor((36-w)/2),y=2+Math.floor((21-5*u)/2);
+  return PX(40,30,rc(0,0,40,25,'#c9cdd0')+rc(0,22,40,3,'#9aa0a5')+rc(2,2,36,20,'#0e1311')+rc(2,2,36,2,'rgba(255,255,255,.08)')+txt(label,x,y,u,col)+(extra||'')+rc(35,23,2,1,'#38d864')+rc(16,25,8,3,'#9aa0a5')+rc(10,28,20,2,'#c9cdd0'));
+}
+function discPx(){
+  let o='';
+  for(let y=0;y<24;y++){let run='',x0=0;
+    const flush=x=>{if(run)o+=rc(x0,y,x-x0,1,run);run='';};
+    for(let x=0;x<24;x++){
+      const dx=x+.5-12,dy=y+.5-12,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);let c='';
+      if(d<=11.8&&d>=2.6){c=d<5?'#aab0b4':d>11?'#7d868c':'#dfe3e6';
+        if(d>5.5&&d<10.8){if(a>-1.5&&a<-.8)c='#ffd34d';else if(a>-.8&&a<-.2)c='#ff8fb0';else if(a>1.6&&a<2.3)c='#7fd6b8';}}
+      if(c!==run){flush(x);run=c;x0=x;}
+    }
+    flush(24);
+  }
+  return PX(24,24,o);
+}
+const gbPx=()=>PX(20,28,rc(1,0,18,28,'#2a2f33')+rc(0,1,20,26,'#2a2f33')+rc(2,1,16,26,'#cfccbd')+rc(1,2,18,24,'#cfccbd')+rc(3,3,14,10,'#5d6470')+rc(5,5,10,6,'#9bbc0f')+rc(6,6,2,1,'#306230')+rc(9,8,4,1,'#306230')+rc(6,9,3,1,'#306230')+rc(4,17,5,1,'#2a2f33')+rc(6,15,1,5,'#2a2f33')+rc(13,19,2,2,'#b5472a')+rc(15,17,2,2,'#b5472a')+rc(11,24,1,2,'#9a978a')+rc(13,23,1,2,'#9a978a')+rc(15,22,1,2,'#9a978a'));
+const heartPx=()=>PX(9,8,rc(1,0,3,1,'#e0412f')+rc(5,0,3,1,'#e0412f')+rc(0,1,9,3,'#e0412f')+rc(1,4,7,1,'#e0412f')+rc(2,5,5,1,'#e0412f')+rc(3,6,3,1,'#e0412f')+rc(4,7,1,1,'#e0412f')+rc(1,1,2,1,'#ff9a8a')+rc(1,2,1,1,'#ff9a8a')+rc(1,4,1,1,'#a52a1e')+rc(2,5,1,1,'#a52a1e')+rc(3,6,1,1,'#a52a1e')+rc(7,3,1,1,'#a52a1e'));
+const toastPx=()=>PX(26,19,rc(5,0,6,8,'#d9a24a')+rc(5,0,6,1,'#f0c878')+rc(6,1,1,2,'#8a5a1c')+rc(14,0,6,8,'#c98a3a')+rc(14,0,6,1,'#f0c878')+rc(15,1,1,2,'#8a5a1c')+rc(1,6,22,11,'#2a2f33')+rc(2,7,20,9,'#b9bec2')+rc(2,7,20,2,'#e3e6e8')+rc(4,7,8,1,'#2a2f33')+rc(13,7,8,1,'#2a2f33')+rc(2,14,20,2,'#7d868c')+rc(17,11,2,2,'#ff4538')+rc(23,9,3,2,'#2a2f33')+rc(3,17,3,2,'#2a2f33')+rc(19,17,3,2,'#2a2f33'));
+const RAMI=PX(16,8,rc(0,0,16,6,'#d8dcdf')+rc(1,1,3,4,'#1e2225')+rc(5,1,3,4,'#1e2225')+rc(9,1,3,4,'#1e2225')+rc(13,1,2,4,'#1e2225')+rc(0,6,7,2,'#e8b923')+rc(9,6,7,2,'#e8b923'));
+const GPUI=PX(18,8,rc(0,0,16,6,'#2a2f33')+rc(1,1,5,4,'#9aa0a5')+rc(3,2,1,2,'#2a2f33')+rc(7,1,5,4,'#9aa0a5')+rc(9,2,1,2,'#2a2f33')+rc(13,1,2,4,'#e8b923')+rc(16,0,2,7,'#c9cdd0')+rc(1,6,12,2,'#e8b923'));
+const SPK=PX(17,14,rc(0,4,3,6,'#9aa0a5')+rc(3,3,2,8,'#c9cdd0')+rc(5,2,2,10,'#ffc21a')+rc(7,1,2,12,'#ffc21a')+rc(9,0,1,14,'#e0a800')+rc(11,4,1,6,'#ffc247','wv')+rc(13,2,1,10,'#ffc247','wv wv2')+rc(15,0,1,14,'#ffc247','wv wv3'));
+function icon(k){
+  switch(k){
+    case 'k8':return monPx('8K','#ffd34d',3,rc(31,4,1,3,'#fff')+rc(30,5,3,1,'#fff')+rc(5,17,1,1,'#fff'));
+    case 'm1':return monPx('4K','#7ff0a0',3);
+    case 'k1080':return monPx('1080','#f1efe4',2,txt('P',33,16,1,'#f1efe4'));
+    case 'dvd':return discPx();
+    case 'gb':return gbPx();
+    case 'px':return heartPx();
+    case 'toast':return toastPx();
+    default:return monPx('?','#f1efe4',3);
+  }
+}
+function faceSVG(l){
+  const D='#1e2225',S='#f2c391',H='#2a2118',Y='#ffc21a',T='#7fdcf0',W='#fff',R='#e0412f',P='#f08c8c';
+  let o=rc(3,3,10,9,S)+rc(4,12,8,2,S)+rc(2,1,12,3,H)+rc(2,4,1,2,H)+rc(13,4,1,2,H)+rc(1,0,14,1,Y)+rc(1,1,1,4,Y)+rc(14,1,1,4,Y)+rc(0,5,3,5,Y)+rc(13,5,3,5,Y)+rc(0,6,1,3,D)+rc(15,6,1,3,D)+rc(1,10,1,3,D)+rc(1,13,5,1,D)+rc(5,12,2,2,D);
+  const brows=rc(4,5,2,1,D)+rc(6,4,1,1,D)+rc(9,4,1,1,D)+rc(10,5,2,1,D);
+  const eyes=rc(5,6,2,2,D)+rc(9,6,2,2,D)+rc(5,6,1,1,W)+rc(9,6,1,1,W);
+  if(l===0)o+=rc(4,7,1,1,D)+rc(5,6,1,1,D)+rc(6,7,1,1,D)+rc(9,7,1,1,D)+rc(10,6,1,1,D)+rc(11,7,1,1,D)+rc(3,9,2,1,P)+rc(11,9,2,1,P)+rc(5,10,6,2,D)+rc(6,10,4,1,W);
+  if(l===1)o+=eyes+rc(5,10,1,1,D)+rc(6,11,4,1,D)+rc(10,10,1,1,D);
+  if(l===2)o+=eyes+brows+rc(6,11,4,1,D);
+  if(l===3)o+=eyes+brows+rc(5,11,1,1,D)+rc(6,10,4,1,D)+rc(10,11,1,1,D)+rc(14,3,1,2,T)+rc(14,5,1,1,T);
+  if(l===4)o+=eyes+brows+rc(5,8,1,3,T)+rc(10,8,1,3,T)+rc(5,12,1,1,D)+rc(6,11,4,1,D)+rc(10,12,1,1,D)+rc(14,3,1,2,T);
+  if(l===5)o+=rc(4,7,3,1,D)+rc(9,7,3,1,D)+brows+rc(5,8,1,5,T)+rc(10,8,1,5,T)+rc(4,9,1,2,T)+rc(11,9,1,2,T)+rc(5,11,1,1,D)+rc(6,10,1,1,D)+rc(7,11,2,1,D)+rc(9,10,1,1,D)+rc(10,11,1,1,D);
+  if(l>=6)o+=rc(4,6,1,1,D)+rc(5,7,1,1,D)+rc(4,8,1,1,D)+rc(11,6,1,1,D)+rc(10,7,1,1,D)+rc(11,8,1,1,D)+brows+rc(4,9,2,4,T)+rc(10,9,2,4,T)+rc(3,11,1,3,T)+rc(12,11,1,3,T)+rc(6,10,4,3,D)+rc(7,12,2,1,R);
+  return PX(16,16,o);
+}
+function fail(n){
+  const a=lvl();progress.fails+=n||1;save();gauges();
+  const b=lvl(),t=document.getElementById('track');
+  if(t){t.classList.remove('hit');void t.offsetWidth;t.classList.add('hit');}
+  if(b>a)toast('Lágrimas al '+tearsPct()+' % · '+LEVELS[b].n);
+}
+function gauges(){
+  const mk=document.getElementById('stops');if(!mk)return;
+  const l=lvl(),n=LEVELS.length-1,t=tearsPct(),X=LEVELS[l],tl=document.getElementById('tl'),ti=document.getElementById('ti'),fc=document.getElementById('face');
+  if(!mk.children.length)mk.innerHTML=LEVELS.map((x,i)=>`<div class="mk" style="left:${i/n*100}%" title="${x.n}"><i></i>${icon(x.k)}</div>`).join('');
+  [...mk.children].forEach((c,i)=>{c.className='mk'+(i<l?' past':i===l?' now':'');});
+  tl.textContent=X.n;tl.className=l<=1?'g-ok':l<=3?'g-mid':'g-bad';
+  ti.innerHTML=icon(X.k);
+  if(fc){fc.innerHTML=faceSVG(l);fc.className='face'+(l>=5?' cry':'');fc.setAttribute('aria-label','Cara del gamer: '+['felicísimo','contento','algo preocupado','sudando','con lágrimas','llorando','a moco tendido'][l]);}
+  document.getElementById('tm').innerHTML=(l===0?'Los gamers pueden jugar a GTA VI en 8K y están felices :)':`Los gamers sólo podrán jugar a ${X.r} y están muy tristes :'(`)+`<i>${X.j}</i>`;
+  document.getElementById('tf').style.width=t+'%';document.getElementById('tp').textContent=t+' %';
+}
+
+//<ALGO>
+const rnd=n=>Math.floor(Math.random()*n);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function randList(n){const max=Math.max(99,n*3);const s=new Set();while(s.size<n)s.add(1+rnd(max));return shuffle([...s]);}
+const isSorted=a=>a.every((v,i)=>i===0||a[i-1]<v);
+const eq=(x,y)=>x.length===y.length&&x.every((v,i)=>v===y[i]);
+function randUnsorted(n){let l;do{l=randList(n);}while(isSorted(l));return l;}
+const bitLen=n=>{let b=0;while(((n-1)>>b)>0)b++;return b;};
+function swp(x){if(x.length<2)return false;[x[0],x[1]]=[x[1],x[0]];return true;}
+function psh(f,t){if(!f.length)return false;t.unshift(f.shift());return true;}
+function rot(x){if(x.length<2)return false;x.push(x.shift());return true;}
+function rrot(x){if(x.length<2)return false;x.unshift(x.pop());return true;}
+const OPS={
+  sa:s=>swp(s.a),sb:s=>swp(s.b),ss:s=>{const x=swp(s.a),y=swp(s.b);return x||y;},
+  pa:s=>psh(s.b,s.a),pb:s=>psh(s.a,s.b),
+  ra:s=>rot(s.a),rb:s=>rot(s.b),rr:s=>{const x=rot(s.a),y=rot(s.b);return x||y;},
+  rra:s=>rrot(s.a),rrb:s=>rrot(s.b),rrr:s=>{const x=rrot(s.a),y=rrot(s.b);return x||y;}
+};
+const applyOp=(s,op)=>OPS[op](s);
+function runner(a,b){const s={a:[...a],b:[...(b||[])]},ops=[];return{s,ops,e:op=>{if(applyOp(s,op))ops.push(op);}};}
+function sort3(R){
+  const a=R.s.a;
+  if(a.length===2){if(a[0]>a[1])R.e('sa');return;}
+  if(a.length<3)return;
+  const [x,y,z]=a;
+  if(x>y&&y<z&&x<z)R.e('sa');
+  else if(x>y&&y>z){R.e('sa');R.e('rra');}
+  else if(x>y&&y<z&&x>z)R.e('ra');
+  else if(x<y&&y>z&&x<z){R.e('sa');R.e('ra');}
+  else if(x<y&&y>z&&x>z)R.e('rra');
+}
+function toTop(R,i,n){if(i<=n-i)for(let k=0;k<i;k++)R.e('ra');else for(let k=0;k<n-i;k++)R.e('rra');}
+function sortSmall(R){
+  if(isSorted(R.s.a))return;
+  if(R.s.a.length<=3){sort3(R);return;}
+  while(R.s.a.length>3){
+    const m=Math.min(...R.s.a);toTop(R,R.s.a.indexOf(m),R.s.a.length);R.e('pb');
+  }
+  sort3(R);
+  while(R.s.b.length)R.e('pa');
+}
+function radix(a0){
+  const R=runner(a0),n=a0.length;
+  if(isSorted(R.s.a))return R.ops;
+  const sorted=[...a0].sort((x,y)=>x-y),rk=new Map(sorted.map((v,i)=>[v,i]));
+  const bits=bitLen(n);
+  for(let i=0;i<bits;i++){
+    for(let j=0;j<n;j++){if(((rk.get(R.s.a[0])>>i)&1)===0)R.e('pb');else R.e('ra');}
+    while(R.s.b.length)R.e('pa');
+    if(isSorted(R.s.a))break;
+  }
+  return R.ops;
+}
+function plan(i,n,j,m){
+  const ri=i===0?0:n-i,rj=j===0?0:m-j;
+  const o=[{k:'rr',c:Math.max(i,j)},{k:'rrr',c:Math.max(ri,rj)},{k:'ra_rrb',c:i+rj},{k:'rra_rb',c:ri+j}];
+  return o.reduce((p,q)=>q.c<p.c?q:p);
+}
+function execPlan(R,p,i,n,j,m){
+  const ri=i===0?0:n-i,rj=j===0?0:m-j;
+  let a1=0,b1=0,a2=0,b2=0,both=0,bothR=0;
+  if(p.k==='rr'){both=Math.min(i,j);a1=i-both;b1=j-both;}
+  else if(p.k==='rrr'){bothR=Math.min(ri,rj);a2=ri-bothR;b2=rj-bothR;}
+  else if(p.k==='ra_rrb'){a1=i;b2=rj;}
+  else{a2=ri;b1=j;}
+  for(let k=0;k<both;k++)R.e('rr');
+  for(let k=0;k<bothR;k++)R.e('rrr');
+  for(let k=0;k<a1;k++)R.e('ra');
+  for(let k=0;k<b1;k++)R.e('rb');
+  for(let k=0;k<a2;k++)R.e('rra');
+  for(let k=0;k<b2;k++)R.e('rrb');
+}
+function targetB(v,B){
+  let best=-1;
+  for(let k=0;k<B.length;k++)if(B[k]<v&&(best<0||B[k]>B[best]))best=k;
+  return best>=0?best:B.indexOf(Math.max(...B));
+}
+function targetA(v,A){
+  let best=-1;
+  for(let k=0;k<A.length;k++)if(A[k]>v&&(best<0||A[k]<A[best]))best=k;
+  return best>=0?best:A.indexOf(Math.min(...A));
+}
+function costsAtoB(A,B){return A.map((v,i)=>{const j=targetB(v,B);return{i,v,j,tv:B[j],p:plan(i,A.length,j,B.length)};});}
+function turk(a0){
+  const R=runner(a0),s=R.s;
+  if(isSorted(s.a))return R.ops;
+  if(s.a.length<=5){sortSmall(R);return R.ops;}
+  R.e('pb');R.e('pb');
+  while(s.a.length>3){
+    let best=null;
+    for(let i=0;i<s.a.length;i++){const j=targetB(s.a[i],s.b),p=plan(i,s.a.length,j,s.b.length);if(!best||p.c<best.p.c)best={i,j,p};}
+    execPlan(R,best.p,best.i,s.a.length,best.j,s.b.length);R.e('pb');
+  }
+  sort3(R);
+  while(s.b.length){
+    let best=null;
+    for(let j=0;j<s.b.length;j++){const i=targetA(s.b[j],s.a),p=plan(i,s.a.length,j,s.b.length);if(!best||p.c<best.p.c)best={i,j,p};}
+    execPlan(R,best.p,best.i,s.a.length,best.j,s.b.length);R.e('pa');
+  }
+  toTop(R,s.a.indexOf(Math.min(...s.a)),s.a.length);
+  return R.ops;
+}
+function verify(a0,ops){const s={a:[...a0],b:[]};for(const op of ops){if(!OPS[op])return false;OPS[op](s);}return s.b.length===0&&isSorted(s.a);}
+function measure(algo,n,trials){
+  const f=algo==='turk'?turk:radix,r=[];let ok=true;
+  for(let t=0;t<trials;t++){const a=randList(n),o=f(a);ok=ok&&verify(a,o);r.push(o.length);}
+  return{min:Math.min(...r),max:Math.max(...r),avg:Math.round(r.reduce((x,y)=>x+y,0)/r.length),ok,trials};
+}
+const TH={100:[700,900,1100,1300,1500],500:[5500,7000,8500,10000,11500]};
+function rating(n,m){const t=TH[n];for(let i=0;i<5;i++)if(m<t[i])return 5-i;return 0;}
+//</ALGO>
+
+function hl(src){
+  const re=/(\/\/[^\n]*)|("(?:[^"\\]|\\.)*")|\b(typedef|struct|static|void|int|long|char|return|if|while|for|else|const|sizeof|NULL)\b|\b(t_node|size_t)\b|(\b\d+\b)|(____)/g;
+  let out='',last=0,m;
+  while((m=re.exec(src))){
+    out+=esc(src.slice(last,m.index));
+    const c=m[1]?'c':m[2]?'s':m[3]?'k':m[4]?'t':m[5]?'n':'blank';
+    out+=`<span class="${c}">${esc(m[0])}</span>`;last=m.index+m[0].length;
+  }
+  return out+esc(src.slice(last));
+}
+const code=s=>`<pre class="code"><code>${hl(s)}</code></pre>`;
+
+function barsHTML(list,rank,N,bits,pick){
+  if(!list.length)return '<div class="empty">vacía</div>';
+  const big=N>14;
+  return list.map((v,idx)=>{
+    const r=rank.get(v),h=N>1?Math.round(135-130*r/(N-1)):135,w=Math.round(16+84*(r+1)/N);
+    const gpu=v%2===0,ic=(!big&&w>=30)?(gpu?GPUI:RAMI):'';
+    const lab=big?'':`<span class="lab">${ic}<span>${v}</span></span>`,bin=(bits&&!big)?`<span class="bin">${r.toString(2).padStart(bits,'0')}</span>`:'';
+    const tag=pick?'button':'div',at=pick?` type="button" data-i="${idx}" aria-label="Contenedor ${v}, ${gpu?'gráficas':'memorias RAM'}"`:` title="${gpu?'Gráficas':'Memorias RAM'}"`;
+    return `<${tag} class="bar"${at} style="--h:${h};width:${w}%">${lab}${bin}</${tag}>`;
+  }).join('');
+}
+
+function makeSim(root,o={}){
+  const box=el('div','sim');
+  box.innerHTML=`<div class="sim-head"><div class="count">Movimientos<b data-k="moves">0</b><span data-k="par"></span></div><div class="status" data-k="status" aria-live="polite"></div></div>
+  <div class="gantry" aria-hidden="true"><i data-k="trolley"></i></div>
+  <div class="stacks" data-k="stacks"><div class="col"><h4><span>Muelle A (pila) <i data-k="na"></i></span><span>↑ cima</span></h4><div class="stack" data-k="a"></div></div>
+  <div class="col"><h4><span>Muelle B (pila) <i data-k="nb"></i></span><span>↑ cima</span></h4><div class="stack" data-k="b"></div></div></div>
+  <div class="ops" data-k="ops"></div><div class="log" data-k="log"></div>
+  <div class="row" data-k="play" hidden><button class="btn" type="button" data-k="pp">▶ Ver solución</button><button class="btn ghost" type="button" data-k="step">Paso</button><button class="btn ghost" type="button" data-k="fin">Terminar</button>
+  <label class="lbl" for="sp${Math.random().toString(36).slice(2,6)}">Velocidad</label><select class="sel" data-k="speed"><option value="700">Lenta</option><option value="300" selected>Media</option><option value="90">Rápida</option><option value="12">Turbo</option></select></div>
+  <div class="row"><button class="btn ghost" type="button" data-k="undo">Deshacer</button><button class="btn ghost" type="button" data-k="reset">Reiniciar</button></div>`;
+  root.append(box);
+  const q=n=>box.querySelector(`[data-k="${n}"]`);
+  [['Intercambiar',['sa','sb','ss']],['Empujar',['pa','pb']],['Rotar',['ra','rb','rr']],['Rotar inverso',['rra','rrb','rrr']]].forEach(([t,l])=>{
+    const g=el('div','og',`<small>${t}</small>`),d=el('div');
+    l.forEach(op=>{const b=el('button','op',op);b.type='button';b.onclick=()=>manual(op);d.append(b);});
+    g.append(d);q('ops').append(g);
+  });
+  let init={a:[],b:[]},st,hist=[],moves=0,par=null,goal='sorted',solver=null,script=null,pos=0,timer=null,playing=false,solved=false,ended=false,rank=new Map(),N=1,bits=0,showBin=false;
+  const goalMet=()=>goal==='sorted'?(st.b.length===0&&isSorted(st.a)):(eq(st.a,goal.a)&&eq(st.b,goal.b||[]));
+  const status=(m,c)=>{const s=q('status');s.textContent=m||'';s.className='status'+(c?' '+c:'');};
+  function draw(){
+    q('a').innerHTML=barsHTML(st.a,rank,N,showBin?bits:0);q('b').innerHTML=barsHTML(st.b,rank,N,showBin?bits:0);
+    q('a').classList.toggle('big',N>14);q('b').classList.toggle('big',N>14);
+    q('na').textContent=`(${st.a.length})`;q('nb').textContent=`(${st.b.length})`;q('moves').textContent=moves;
+    const lo=hist[hist.length-1]||'';q('trolley').style.left=(/^(pa|pb|ss|rr|rrr)$/.test(lo)?50:/b$/.test(lo)?75:25)+'%';
+    q('log').innerHTML=(hist.length>18?`<span>… ${hist.length-18} antes</span>`:'')+hist.slice(-18).map(x=>`<span>${x}</span>`).join('');
+  }
+  function updPlay(){q('pp').textContent=playing?'⏸ Pausa':(script&&pos>0&&!ended?'▶ Continuar':'▶ Ver solución');}
+  function stopPlay(){playing=false;clearTimeout(timer);updPlay();}
+  function resetState(){stopPlay();st={a:[...init.a],b:[...init.b]};hist=[];moves=0;solved=false;script=null;pos=0;ended=false;status('');draw();}
+  function load(p){
+    init={a:[...p.a],b:[...(p.b||[])]};par=p.par||null;goal=p.goal||'sorted';solver=p.solver||null;showBin=!!p.showBin;
+    const all=[...init.a,...init.b].sort((x,y)=>x-y);rank=new Map(all.map((v,i)=>[v,i]));N=all.length;bits=bitLen(N);
+    q('play').hidden=!solver;q('par').textContent=par?` · meta ≤ ${par}`:'';q('speed').value=N>=50?'12':'300';resetState();
+  }
+  function manual(op){
+    if(script){script=null;stopPlay();}
+    if(!applyOp(st,op)){const s=q('stacks');s.classList.remove('shake');void s.offsetWidth;s.classList.add('shake');return;}
+    hist.push(op);moves++;draw();
+    if(!solved&&goalMet()){
+      solved=true;status(`✔ Resuelto en ${moves} movimientos`+(par?(moves<=par?' · dentro de la meta':` · la meta era ${par}`):''),'ok');
+      if(par&&moves>par){toast(pickOne(OVER));fail();}
+      o.onSolve&&o.onSolve({moves,par});
+    }
+  }
+  function ensure(){if(!script){resetState();script=solver(init.a);pos=0;}}
+  function step(quiet){
+    ensure();
+    if(pos<script.length){const op=script[pos++];applyOp(st,op);hist.push(op);moves++;if(!quiet)draw();}
+    if(pos>=script.length&&!ended){
+      ended=true;stopPlay();draw();status(`Algoritmo terminado: ${moves} movimientos`+(goalMet()?'':' (no quedó ordenada)'),'ok');
+      o.onScriptEnd&&o.onScriptEnd({moves,ok:goalMet(),n:N});
+    }
+  }
+  function loop(){if(!playing)return;step();if(playing)timer=setTimeout(loop,+q('speed').value);}
+  q('pp').onclick=()=>{if(playing){stopPlay();return;}if(ended)resetState();ensure();playing=true;updPlay();loop();};
+  q('step').onclick=()=>{stopPlay();if(ended)resetState();step();};
+  q('fin').onclick=()=>{if(ended)resetState();ensure();stopPlay();do{step(true);}while(!ended);};
+  q('reset').onclick=resetState;
+  q('undo').onclick=()=>{
+    if(!hist.length||script)return;
+    const h=hist.slice(0,-1);st={a:[...init.a],b:[...init.b]};hist=[];moves=0;solved=false;status('');
+    h.forEach(op=>{applyOp(st,op);hist.push(op);moves++;});draw();
+  };
+  return{load};
+}
+
+const missions=[];
+const doneIn=m=>Object.keys(progress.done).filter(k=>k.startsWith(m.id+'.')).length;
+let cur=0;
+const nav=document.getElementById('nav'),stage=document.getElementById('stage');
+document.addEventListener('click',e=>{const d=nav.querySelector('details');if(d&&d.open&&!nav.contains(e.target))d.open=false;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){const d=nav.querySelector('details');if(d)d.open=false;}});
+function toast(t){const n=document.getElementById('toast');n.textContent=t;n.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{n.hidden=true;},1400);}
+function chrome(){
+  nav.innerHTML='';
+  const det=el('details','menu'),sum=el('summary'),list=el('div','mlist');
+  det.append(sum,list);nav.append(det);
+  let tot=0,dn=0;
+  missions.forEach((m,i)=>{
+    const d=Math.min(doneIn(m),m.total);tot+=m.total;dn+=d;
+    const b=el('button','',`<span class="n">${i}</span><span class="t">${m.name}<small>${m.sub}</small></span><span class="st">${d}/${m.total}</span>`);
+    b.type='button';if(i===cur)b.setAttribute('aria-current','true');if(d>=m.total)b.classList.add('complete');
+    b.onclick=()=>go(i);list.append(b);
+    if(i===cur)sum.innerHTML=`<span class="n">${i}</span><span class="t">${m.name}<small>${m.sub}</small></span><span class="st">${d}/${m.total}</span><span class="car">Misiones ▾</span>`;
+  });
+  const pct=tot?dn/tot:0;
+  document.getElementById('meter').style.width=Math.round(pct*100)+'%';
+  document.getElementById('xp').textContent=dn*10+' XP';gauges();
+  document.getElementById('rank').textContent=pct>=1?'Dirección del muelle':pct>=.6?'Supervisión':pct>=.25?'Operación':'Aprendizaje';
+}
+function setDone(id,v){
+  if(v){
+    if(progress.done[id])return;progress.done[id]=1;toast('+10 XP');
+    progress.ok=(progress.ok||0)+1;if(progress.ok%3===0&&progress.fails>0)progress.fails--;
+  }else{if(!progress.done[id])return;delete progress.done[id];}
+  save();chrome();
+}
+const markDone=id=>setDone(id,true);
+function go(i){
+  cur=i;progress.last=i;save();stage.innerHTML='';missions[i].render(stage);chrome();
+  try{history.replaceState(null,'','#m'+i);}catch(e){}
+  window.scrollTo(0,0);
+}
+function head(root,i,txt){
+  const m=missions[i];
+  root.append(el('div','mh',`<span class="mn">Atraque ${i}</span><h2>${m.name}</h2><p class="sub">${m.sub}</p>`));
+  root.append(el('div','radio riv',`<div class="spk">${SPK}</div><div class="pa"><div class="pa-h"><span class="led"></span>PALET-4 · MEGAFONÍA DEL MUELLE<small>(no es una IA, a diferencia de tu otra pestaña)</small></div><p class="chime">*DING-DONG*</p><p>${txt}</p><p class="clic">— FIN DEL COMUNICADO · CRRK —</p></div>`));
+}
+function sec(root,title,html){const s=el('section','sec',`<h3>${title}</h3>${html||''}`);root.append(s);return s;}
+const term=(w,t)=>`<div class="term"><b>${w}</b>${t}</div>`;
+function foot(root,i){
+  if(i>=missions.length-1)return;
+  const b=el('button','btn','Siguiente misión: '+missions[i+1].name+' →');b.type='button';b.style.alignSelf='flex-start';b.onclick=()=>go(i+1);root.append(b);
+}
+function quiz(root,mid,qs){
+  const s=sec(root,'Preguntas de la misión');
+  qs.forEach((q,i)=>{
+    const id=`${mid}.q${i}`,card=el('div','q');
+    card.innerHTML=`<div class="qh"><span>Pregunta ${i+1}</span><span>+10 XP</span></div><p class="qt">${q.q}</p>${q.code?code(q.code):''}<div class="opts"></div><div class="fb" aria-live="polite"></div>`;
+    const opts=card.querySelector('.opts'),fb=card.querySelector('.fb'),btns=[];
+    const finish=()=>{btns.forEach(b=>{b.disabled=true;});btns[q.a].classList.add('right');fb.className='fb ok';fb.innerHTML='✔ '+q.e;};
+    q.o.forEach((t,k)=>{
+      const b=el('button','opt',t);b.type='button';btns.push(b);
+      b.onclick=()=>{
+        if(k===q.a){markDone(id);finish();fb.insertAdjacentHTML('beforeend','<br><i>PALET-4: '+pickOne(PRAISE)+'</i>');}
+        else{fail();b.classList.add('wrong');b.disabled=true;fb.className='fb';fb.innerHTML=(q.h?q.h+'<br>':'')+'<i>PALET-4: '+pickOne(WRONG)+'</i>';}
+      };
+      opts.append(b);
+    });
+    if(progress.done[id])finish();
+    s.append(card);
+  });
+}
+
+// ---------- Misión 0 ----------
+missions.push({id:'m0',name:'Briefing',sub:'La visión general',total:3,render(root){
+  head(root,0,'ATENCIÓN, PERSONAL DEL MUELLE PUSH SWAP. ATENCIÓN. HOY LLEGA EL CARGAMENTO QUE HARÁ POSIBLE GTA VI EN PC: TARJETAS GRÁFICAS Y MEMORIAS RAM. SE RUEGA DESCARGARLAS EN ORDEN. REPITO: EN ORDEN. SI NO LLEGAN BIEN ORDENADAS, MILLONES DE GAMERS NO PODRÁN JUGAR, O JUGARÁN CON UNA RESOLUCIÓN DIGNA DE UNA TOSTADORA. <i>Se informa de que el medidor de lágrimas empieza en 0 % y los gamers juegan en 8K. Dos muelles, una grúa, cero excusas. Comiencen la descarga.</i>');
+  sec(root,'Visión general',`<p>Recibes una lista de enteros. Empiezan todos en la <b>pila A</b>; la <b>pila B</b> está vacía. Tu programa imprime, una por línea, las instrucciones que dejan A ordenada (el menor arriba) y B vacía. Nadie te pide ordenar rápido: te piden ordenar con <b>pocas instrucciones</b>.</p>
+  ${term('pila (stack)','Del inglés <i>stack</i>, «montón». Cada número de la pila es una pieza (una tarjeta gráfica o una barra de RAM). Sólo accedes a la de arriba. Se resume en LIFO: <i>last in, first out</i>, el último en entrar es el primero en salir.')}
+  ${term('push_swap','<i>push</i> = empujar y <i>swap</i> = intercambiar: las dos operaciones que dan nombre al proyecto.')}`);
+  const s=sec(root,'Mapa del proyecto (las 5 fases)');
+  const ph=[['Fase 1','Parseo y errores',3],['Fase 2','Estructura de datos',2],['Fase 2','Las operaciones en C',4],['Fase 3','Casos pequeños (2, 3, 5)',5],['Fase 4','Algoritmo general: Radix',6],['Fase 4','Algoritmo general: Turk',7],['Fase 5','Optimización y pruebas',8]];
+  const g=el('div','grid');
+  ph.forEach(([f,t,i])=>{const b=el('button','card',`<h4>${f}</h4><p>${t}<br><small class="lbl">Misión ${i} →</small></p>`);b.type='button';b.style.cursor='pointer';b.style.textAlign='left';b.onclick=()=>go(i);g.append(b);});
+  s.append(g);
+  quiz(root,'m0',[
+    {q:'¿Qué imprime push_swap por la salida estándar?',o:['La lista de números ordenada','Las instrucciones que ordenan la pila A, una por línea','Sólo el número de movimientos','Nada: ordena en memoria'],a:1,e:'Imprimes la «receta»: <code>pb</code>, <code>ra</code>, <code>sa</code>… y otro programa (el checker) la aplica.'},
+    {q:'¿Qué es lo que más pesa en la nota?',o:['Que el programa tarde poco','Que use poca memoria','Que las instrucciones sean pocas y ordenen bien','Que uses quicksort'],a:2,e:'Hay que ordenar bien y, además, con pocos movimientos. Por eso existen algoritmos pensados para estas operaciones.'},
+    {q:'Al empezar, ¿cómo están las pilas?',o:['A vacía y B con los números','A con los números y B vacía','Los números repartidos entre A y B','Ambas vacías'],a:1,e:'A contiene todo y B empieza vacía. B es tu zona de trabajo temporal.'}
+  ]);
+  foot(root,0);
+}});
+
+// ---------- Misión 1 ----------
+missions.push({id:'m1',name:'La grúa',sub:'Las 11 operaciones',total:8,render(root){
+  head(root,1,'AVISO DE SEGURIDAD A TODO EL PERSONAL. LA GRÚA TIENE ONCE MANIOBRAS. SI UNA GRÁFICA SE CAE, UN GAMER BAJA DE RESOLUCIÓN. SI CAEN VARIAS, JUGARÁ A GTA VI CON LA NITIDEZ DE LA FOTO DE TU PRIMER MÓVIL. <i>Practiquen aquí, donde las tarjetas son de mentira. Gracias por su atención. Y por no tocar la palanca roja.</i>');
+  sec(root,'Visión general',`<p>Cuatro familias. La letra final indica la pila: <code>a</code>, <code>b</code>, o la doble (<code>ss</code>, <code>rr</code>, <code>rrr</code>), que mueve las dos pilas a la vez y cuenta como <b>una sola instrucción</b>. Ahí se ahorran movimientos.</p>
+  <div class="grid"><div class="card"><h4>swap · sa sb ss</h4><p>Intercambia los dos de arriba.</p></div><div class="card"><h4>push · pa pb</h4><p>Mueve el de arriba de una pila a otra. La letra es el <b>destino</b>: <code>pb</code> manda de A a B.</p></div>
+  <div class="card"><h4>rotate · ra rb rr</h4><p>Todo sube un puesto: el primero pasa al final.</p></div><div class="card"><h4>reverse rotate · rra rrb rrr</h4><p>Todo baja un puesto: el último pasa a ser el primero.</p></div></div>
+  ${term('rotate','«Girar». Piensa en la pila como un carrusel.')}`);
+  const retos=[
+    {a:[2,1,3],goal:{a:[1,2,3]},par:1,t:'Ordena A con una sola instrucción.'},
+    {a:[3,1,2],goal:{a:[1,2,3]},par:1,t:'Aquí no hay que intercambiar nada: sólo girar.'},
+    {a:[1,2,3],goal:{a:[3,1,2]},par:1,t:'Lleva el 3 a la cima. Mira cuál de los dos giros lo hace en un paso.'},
+    {a:[1,2,3],goal:{a:[3],b:[2,1]},par:2,t:'Pasa los dos de arriba a B.'},
+    {a:[4,5],b:[1,2],goal:{a:[1,4,5],b:[2]},par:1,t:'Trae el 1 de B a A.'},
+    {a:[2,1],b:[4,3],goal:{a:[1,2],b:[3,4]},par:1,t:'Arregla las dos pilas con una sola instrucción.'}
+  ];
+  const s=sec(root,'Zona de práctica','<p>Elige un reto. La cima es el primer número de cada lista.</p>');
+  const tabs=el('div','tabs'),info=el('div','goal');s.append(tabs,info);
+  let active=0;
+  const sim=makeSim(s,{onSolve:()=>{if(active<retos.length){markDone('m1.r'+active);paint();}}});
+  const tb=[];
+  function paint(){tb.forEach((b,i)=>{b.classList.toggle('ok',!!progress.done['m1.r'+i]);});}
+  function pick(i){
+    active=i;tb.forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+    if(i<retos.length){const p=retos[i];sim.load({a:p.a,b:p.b,goal:p.goal,par:p.par});
+      info.innerHTML=`<b>Objetivo:</b> ${p.t}<br><span class="mono">Meta → A=[${p.goal.a}] B=[${p.goal.b||''}]</span>`;}
+    else{sim.load({a:[5,2,8,1,9,3],goal:'sorted'});info.innerHTML='<b>Modo libre:</b> prueba lo que quieras. Si ordenas A con B vacía, se marca como resuelto.';}
+  }
+  [...retos.map((_,i)=>'Reto '+(i+1)),'Modo libre'].forEach((t,i)=>{const b=el('button','tab',t);b.type='button';b.onclick=()=>pick(i);tb.push(b);tabs.append(b);});
+  pick(0);paint();
+  quiz(root,'m1',[
+    {q:'A = [3, 1, 2] (el 3 arriba). ¿Qué instrucción la deja ordenada?',o:['sa','ra','rra','pb'],a:1,e:'<code>ra</code> manda el 3 al fondo y queda [1, 2, 3].'},
+    {q:'¿Qué diferencia hay entre <code>ra</code> y <code>rra</code>?',o:['ra afecta a A y rra a B','ra sube todo un puesto (el primero va al final); rra lo baja (el último va arriba)','ra ordena y rra desordena','Ninguna'],a:1,e:'Son inversas. Elegir la que menos pasos necesite será clave más adelante.'}
+  ]);
+  foot(root,1);
+}});
+
+// ---------- Misión 2 ----------
+missions.push({id:'m2',name:'Nodos y listas',sub:'Estructura de datos en C',total:3,render(root){
+  head(root,2,'ATENCIÓN, ALMACÉN. EL ALMACÉN NO TRAE ESTANTERÍAS: HAY QUE CONSTRUIRLAS CON STRUCTS. CADA FUGA DE MEMORIA ES UNA BARRA DE RAM QUE NO LLEGA A SU DESTINO Y UN GAMER QUE VERÁ GTA VI A TROMPICONES. <i>Se informa de que le pides a la IA que te escriba los structs «sólo para dudas puntuales». Eso dijiste. Muchas veces. Hoy son tuyos.</i>');
+  sec(root,'Visión general',`<p>Cada pila es una cadena de <b>nodos</b>. Un nodo guarda un número y la dirección del siguiente. La cima es el primer nodo y el último apunta a <code>NULL</code>.</p>
+  <div class="chain"><span class="ptr">a</span>→<span class="nd"><i>7</i><i>•</i></span>→<span class="nd"><i>3</i><i>•</i></span>→<span class="nd"><i>9</i><i>NULL</i></span></div>
+  ${term('lista enlazada','Datos encadenados por punteros. Insertar o sacar por delante es barato, justo lo que piden push, rotate y swap.')}
+  ${term('NULL','Puntero «a nada». Marca el final de la lista y la lista vacía.')}
+  ${term('malloc','<i>memory allocate</i>: reserva memoria en el heap. Todo <code>malloc</code> necesita su <code>free</code>.')}`);
+  sec(root,'En detalle: el nodo',`${code(`typedef struct s_node
+{
+    int             value;   // el número original
+    int             index;   // su posición en la lista ordenada (radix)
+    struct s_node   *next;   // el nodo siguiente
+}   t_node;`)}
+  ${term('typedef','Crea un alias: escribes <code>t_node</code> en vez de <code>struct s_node</code>. Los prefijos <code>s_</code> y <code>t_</code> son de la Norma de 42.')}`);
+  sec(root,'En detalle: el doble puntero',`<p>C pasa los argumentos <b>por copia</b>. Si la función recibe <code>t_node *lst</code>, cambia una copia y la cabeza original no se entera. Para cambiar a qué nodo apunta la cabeza (lista vacía, <code>pa</code>, <code>pb</code>…) necesita la <b>dirección del puntero</b>: <code>t_node **lst</code>.</p>
+  ${code(`void add_back(t_node *lst, t_node *new)    // MAL: copia del puntero
+{
+    if (!lst)
+        lst = new;                       // cambia sólo la copia local
+}
+
+void add_back(t_node **lst, t_node *new)  // BIEN
+{
+    t_node *last;
+
+    if (!*lst)
+    {
+        *lst = new;                      // cambia el puntero original
+        return ;
+    }
+    last = *lst;
+    while (last->next)
+        last = last->next;
+    last->next = new;
+}`)}
+  <p>Se llama con <code>add_back(&amp;a, new_node(7));</code>. En tu código real, la Norma pide tabulaciones y declarar y asignar en líneas distintas.</p>`);
+  quiz(root,'m2',[
+    {q:'Completa <code>new_node</code>: ¿qué va en el hueco?',code:`t_node *new_node(int value)
+{
+    t_node *node;
+
+    node = malloc(sizeof(t_node));
+    if (!node)
+        return (NULL);
+    node->value = value;
+    node->index = 0;
+    node->next = ____;
+    return (node);
+}`,o:['NULL','node','&node','value'],a:0,e:'El nuevo nodo aún no tiene siguiente, así que <code>next</code> vale <code>NULL</code>.'},
+    {q:'¿Por qué <code>add_back</code> recibe <code>t_node **lst</code>?',o:['Porque C pasa los arrays por referencia','Porque la función puede tener que cambiar la cabeza (por ejemplo, en lista vacía)','Para gastar menos memoria','Porque lo exige la Norma'],a:1,h:'Piensa en qué ocurre cuando la lista está vacía.',e:'Con una copia del puntero no podrías cambiar la cabeza original.'},
+    {q:'Esta <code>free_list</code> tiene un error. ¿Cuál?',code:`void free_list(t_node **lst)
+{
+    t_node *tmp;
+
+    while (*lst)
+    {
+        free(*lst);
+        tmp = (*lst)->next;
+        *lst = tmp;
+    }
+}`,o:['Lee <code>(*lst)->next</code> después de liberar el nodo (use-after-free)','Falta un return','tmp debería ser doble puntero','No se puede usar free dentro de un while'],a:0,e:'Guarda <code>next</code> en <code>tmp</code> <b>antes</b> de hacer <code>free</code>.'}
+  ]);
+  foot(root,2);
+}});
+
+// ---------- Misión 3 ----------
+function checkArgs(str){
+  const t=str.trim();
+  if(!t)return{ok:true,none:true,msg:'Sin argumentos: no imprime nada y devuelve el control a la terminal.'};
+  const tok=t.split(/\s+/),seen=new Set(),nums=[];
+  for(const x of tok){
+    if(!/^[+-]?\d+$/.test(x))return{ok:false,msg:`«${esc(x)}» no es un entero válido (sólo dígitos con un signo opcional).`};
+    const v=BigInt(x);
+    if(v<-2147483648n||v>2147483647n)return{ok:false,msg:`«${esc(x)}» no cabe en un int (de −2147483648 a 2147483647).`};
+    const k=v.toString();if(seen.has(k))return{ok:false,msg:`«${esc(x)}» está repetido (+5 y 5 son el mismo número).`};
+    seen.add(k);nums.push(Number(v));
+  }
+  return isSorted(nums)?{ok:true,msg:'Válido y ya ordenado: no imprime nada.'}:{ok:true,msg:'Válido: pasa a la fase de ordenar.'};
+}
+missions.push({id:'m3',name:'Aduana',sub:'Parseo y errores',total:5,render(root){
+  head(root,3,'ADUANA, ADUANA. TODO CARGAMENTO MAL DOCUMENTADO SE RECHAZA CON UN «ERROR». UNA PIEZA RECHAZADA ES UNA GRÁFICA MENOS EN LAS TIENDAS Y UN GTA VI QUE SE VERÁ PEOR. <i>Los estudiantes de 42 no necesitáis la IA, claro. Sólo la tenéis abierta en una pestaña. Permanentemente. Se ruega revisar los papeles.</i>');
+  sec(root,'Visión general',`<p>Hay tres controles, en este orden: <b>formato</b> (entero con signo opcional), <b>rango</b> (cabe en un <code>int</code>) y <b>duplicados</b>. Si falla alguno, imprimes <code>Error</code> y un salto de línea por la <b>salida de errores</b> y liberas la memoria.</p>
+  ${term('stderr','Salida estándar de errores, descriptor 2: <code>write(2, "Error\\n", 6)</code>.')}
+  <p>Debe funcionar tanto <code>./push_swap 3 1 2</code> como <code>./push_swap "3 1 2"</code>; en el segundo caso hay que separar el texto en palabras con <code>ft_split</code>.</p>`);
+  const s=sec(root,'Prueba la aduana');
+  const box=el('div','tool',`<label class="lbl" for="ad-in">Argumentos, como los escribirías tras ./push_swap</label><div class="row"><input id="ad-in" class="inp" type="text" spellcheck="false" value="3 1 2"><button class="btn" id="ad-go" type="button">Revisar</button></div><div class="row" id="ad-pre"></div><div id="ad-out" aria-live="polite"></div>`);
+  s.append(box);
+  let seenOk=false,seenErr=false;
+  const inp=box.querySelector('#ad-in'),out=box.querySelector('#ad-out');
+  function run(){
+    const r=checkArgs(inp.value);
+    out.innerHTML=r.ok?`<div class="res good"><b>OK</b> · ${r.msg}</div>`:`<div class="res bad"><b>Error</b> (por stderr)<br>${r.msg}</div>`;
+    if(r.ok&&!r.none)seenOk=true;if(!r.ok)seenErr=true;
+    if(seenOk&&seenErr)markDone('m3.aduana');
+  }
+  box.querySelector('#ad-go').onclick=run;inp.onkeydown=e=>{if(e.key==='Enter')run();};
+  [['1 2 2','duplicado'],['1 a 3','letra'],['2147483648','fuera de rango'],['+5 -3 0','con signos'],['--5','doble signo'],['','sin argumentos'],['1 2 3','ya ordenado']].forEach(([v,l])=>{
+    const b=el('button','tab',l);b.type='button';b.onclick=()=>{inp.value=v;run();};box.querySelector('#ad-pre').append(b);
+  });
+  quiz(root,'m3',[
+    {q:'¿Cuál de estos argumentos debe dar Error?',o:['-2147483648','+5','2147483648','0'],a:2,e:'INT_MAX es 2147483647, así que 2147483648 no cabe en un int.'},
+    {q:'¿Por qué se suele escribir un <code>ft_atol</code> que devuelve <code>long</code>?',o:['Porque es más rápido','Porque con un int el desbordamiento ya no se puede detectar a posteriori; con un long (64 bits) comparas contra INT_MIN e INT_MAX','Porque la Norma lo pide','Para aceptar decimales'],a:1,e:'El desbordamiento de un int con signo es comportamiento indefinido. Con un tipo más ancho lo compruebas antes de convertir.'},
+    {q:'<code>./push_swap</code> sin argumentos. ¿Qué debe hacer?',o:['Imprimir Error','No imprimir nada y devolver el prompt','Imprimir 0','Quedarse esperando entrada'],a:1,e:'Según el subject, sin parámetros no se muestra nada. Compruébalo siempre en tu PDF actual.'},
+    {q:'Le pasas <code>1 2 3</code>, que ya está ordenado. ¿Qué imprimes?',o:['sa','ra','Nada: cero instrucciones','Error'],a:2,e:'No hace falta mover nada. Un programa que ordena lo ya ordenado desperdicia movimientos.'}
+  ]);
+  foot(root,3);
+}});
+
+// ---------- Misión 4 ----------
+missions.push({id:'m4',name:'Mando de la grúa',sub:'Implementar las operaciones',total:3,render(root){
+  head(root,4,'ATENCIÓN, OPERADOR DE GRÚA. UN PUNTERO MAL COLOCADO DEJA UN PALÉ DE GRÁFICAS EN EL AIRE Y A MILES DE GAMERS SIN SU TARJETA. LOS TÉCNICOS LO LLAMAN SEGFAULT. LOS GAMERS, «ADIÓS, 1080p». <i>Hoy el compilador te gritará a ti y no a un chat.</i>');
+  sec(root,'Visión general',`<p>Escribes <b>cuatro</b> funciones de lógica (swap, push, rotate, reverse rotate) y las usas sobre A o B. <code>ss</code>, <code>rr</code> y <code>rrr</code> sólo llaman a la misma lógica dos veces. Cada instrucción pública hace la maniobra e imprime su nombre.</p>`);
+  sec(root,'En detalle',`<p>Swap y push, trabajando con punteros:</p>
+  ${code(`static void swap(t_node **lst)
+{
+    t_node *first;
+    t_node *second;
+
+    if (!*lst || !(*lst)->next)
+        return ;
+    first = *lst;
+    second = first->next;
+    first->next = second->next;
+    second->next = first;
+    *lst = second;
+}
+
+static void push(t_node **src, t_node **dst)
+{
+    t_node *node;
+
+    if (!*src)
+        return ;
+    node = *src;
+    *src = node->next;
+    node->next = *dst;
+    *dst = node;
+}
+
+void sa(t_node **a)
+{
+    swap(a);
+    write(1, "sa\\n", 3);
+}`)}
+  <p>Dibuja los nodos en papel y sigue cada línea: es el mejor ejercicio para entender los punteros.</p>`);
+  quiz(root,'m4',[
+    {q:'A <code>push</code> le falta la línea <code>node->next = *dst;</code>. ¿Qué efecto tiene?',o:['Ninguno','El nodo movido no apunta al resto de la pila destino, que queda desconectada (se pierden nodos)','Se duplica el nodo','El programa imprime Error'],a:1,e:'Sin esa línea el nodo conserva su antiguo <code>next</code> y la pila destino queda colgando: pierdes nodos y memoria.'},
+    {q:'Completa <code>rotate</code>:',code:`static void rotate(t_node **lst)
+{
+    t_node *first;
+    t_node *last;
+
+    if (!*lst || !(*lst)->next)
+        return ;
+    first = *lst;
+    *lst = first->next;
+    last = get_last(*lst);
+    last->next = ____;
+    first->next = NULL;
+}`,o:['first','*lst','NULL','last'],a:0,e:'El antiguo primero se engancha detrás del último. Después se le pone <code>next = NULL</code> porque es el nuevo final.'},
+    {q:'¿Cuántas funciones de lógica distintas necesitas para las 11 instrucciones?',o:['2','3','4','11'],a:2,e:'swap, push, rotate y reverse rotate. El resto son combinaciones con distinta pila.'}
+  ]);
+  foot(root,4);
+}});
+
+const solveSmall=a=>{const R=runner(a);sortSmall(R);return R.ops;};
+function statHTML(label,n,st){
+  const sc=rating(n,st.max);
+  return `<div class="stat"><em>${label}</em><b>${st.avg}</b><span>media · mín ${st.min} · máx ${st.max}</span><small>nota orientativa (peor caso): ${sc}/5${st.ok?' · checker ✔':' · ¡pila sin ordenar!'}</small></div>`;
+}
+function compare(root,sets){
+  const box=el('div','tool',`<div class="row"><button class="btn" type="button">Medir con listas aleatorias</button><span class="lbl" data-k="s"></span></div><div class="stats" data-k="o"></div><p class="lbl">Umbrales orientativos: 100 números, nota máxima por debajo de 700 y mínimo aprobado por debajo de 1500; 500 números, máxima por debajo de 5500 y mínimo por debajo de 11500. La hoja de evaluación actual manda.</p>`);
+  root.append(box);
+  const btn=box.querySelector('button'),o=box.querySelector('[data-k=o]'),s=box.querySelector('[data-k=s]');
+  btn.onclick=()=>{
+    btn.disabled=true;s.textContent='Calculando…';o.innerHTML='';
+    setTimeout(()=>{
+      sets.forEach(([algo,n])=>{o.insertAdjacentHTML('beforeend',statHTML(`${algo==='turk'?'Turk':'Radix'} · ${n} números`,n,measure(algo,n,n===100?10:3)));});
+      s.textContent='';btn.disabled=false;
+    },40);
+  };
+}
+
+// ---------- Misión 5 ----------
+missions.push({id:'m5',name:'Casos pequeños',sub:'Ordenar 3 y 5 contenedores',total:5,render(root){
+  head(root,5,'AVISO. CARGAS PEQUEÑAS, PERO SENSIBLES. UN FALLO CON TRES O CINCO PIEZAS Y UNA TIENDA ENTERA SE QUEDA SIN RAM. CON TRES PIEZAS SÓLO EXISTEN SEIS DESÓRDENES POSIBLES. <i>Seguro que no encuentras el séptimo. Seguro.</i>');
+  const perms=[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]];
+  sec(root,'Visión general',`<p>Con <b>3</b> números resuelves con una tabla de casos (máximo 2 instrucciones con este método). Con <b>5</b> usas un truco: mandas a B los dos menores, ordenas los 3 restantes y los traes de vuelta. Los topes orientativos del subject son 3 instrucciones para 3 números y 12 para 5; verifícalos en tu PDF.</p>`);
+  sec(root,'En detalle: los 6 casos de 3 números (cima a la izquierda)',`<div class="cases">${perms.map(p=>{const o=solveSmall(p);return `<div class="case"><b>[${p.join(', ')}]</b>${o.length?o.join(' → '):'ya ordenado'}</div>`;}).join('')}</div>
+  <p><b>Para 5 números:</b> 1) lleva el menor arriba con <code>ra</code> o <code>rra</code> (el más corto) y <code>pb</code>; 2) repite con el siguiente menor; 3) ordena A con el caso de 3; 4) <code>pa</code>, <code>pa</code>. Como mandaste primero el menor, al volver quedan en su sitio.</p>`);
+  const s=sec(root,'Zona de práctica');
+  const tabs=el('div','tabs');s.append(tabs);
+  let mode=3;
+  const sim=makeSim(s,{onSolve:()=>markDone(mode===3?'m5.s3':'m5.s5')});
+  const nw=()=>sim.load({a:randUnsorted(mode),goal:'sorted',par:mode===3?2:12,solver:solveSmall});
+  const bs=[];
+  [[3,'3 contenedores'],[5,'5 contenedores']].forEach(([m,t])=>{const b=el('button','tab',t);b.type='button';b.onclick=()=>{mode=m;bs.forEach(x=>x.setAttribute('aria-pressed',x===b));nw();};bs.push(b);tabs.append(b);});
+  const n=el('button','tab','Nuevo desorden');n.type='button';n.onclick=nw;tabs.append(n);
+  bs[0].setAttribute('aria-pressed','true');nw();
+  quiz(root,'m5',[
+    {q:'A = [2, 3, 1] (el 2 arriba). ¿Cuál es la instrucción más corta?',o:['sa','ra','rra','sa y ra'],a:2,e:'<code>rra</code> sube el 1 a la cima y queda [1, 2, 3].'},
+    {q:'En el método de 5 números, ¿qué se manda primero a B?',o:['Los dos mayores','Los dos menores','Los dos de arriba, sean cuales sean','Los de posición impar'],a:1,e:'Los menores, para que al volver con <code>pa</code> queden encima del resto.'},
+    {q:'¿Por qué bastan dos <code>pa</code> al final?',o:['Porque B se ordena sola','Porque mandaste primero el menor y luego el segundo menor, y al volver salen en el orden correcto','Porque sa lo arregla','Porque A ya estaba ordenada'],a:1,e:'B funciona como pila: el segundo menor está arriba y sale primero, luego el menor, que queda encima.'}
+  ]);
+  foot(root,5);
+}});
+
+// ---------- Misión 6 ----------
+missions.push({id:'m6',name:'Radix',sub:'Ordenar por bits',total:6,render(root){
+  head(root,6,'ATENCIÓN. ENTRAN CIEN PIEZAS POR LA PUERTA NORTE. SI EL REPARTO FALLA, LA RAM NO LLEGA Y MEDIA CIUDAD GAMER JUGARÁ A GTA VI EN 480p. <i>Procedimiento: reparto por bits. Ceros a un lado, unos al otro. Repito: ceros a un lado, unos al otro.</i>');
+  sec(root,'Visión general',`<p>En vez de comparar números entre sí, miras sus <b>bits</b> de derecha a izquierda. En cada pasada, los que tienen un 0 en ese bit se van a B (<code>pb</code>) y los que tienen un 1 se quedan girando en A (<code>ra</code>). Luego traes todo de B (<code>pa</code>). Tras tantas pasadas como bits, A está ordenada.</p>
+  ${term('radix','«Raíz» o base de numeración. Ordena dígito a dígito (aquí, bit a bit), sin comparar números enteros.')}
+  ${term('bit','Un dígito binario, 0 o 1. El número 5 es 101.')}
+  ${term('estable','Una pasada no cambia el orden relativo de los que empatan. Esa propiedad hace que el truco funcione.')}`);
+  sec(root,'En detalle',`<p><b>1. Normalizar:</b> cambia cada valor por su posición en la lista ordenada (0, 1, 2…). Así no hay negativos ni números enormes y el número de pasadas depende sólo de cuántos son: los bits de <code>n-1</code>.</p>`);
+  const s=sec(root,'Pruébalo: normalizar');
+  const nb=el('div','tool',`<label class="lbl" for="nz-in">Números separados por espacios</label><div class="row"><input id="nz-in" class="inp" value="42 -7 1000 3 15"><button class="btn" type="button">Normalizar</button></div><div class="scroll" data-k="o"></div>`);
+  s.append(nb);
+  nb.querySelector('button').onclick=()=>{
+    const v=nb.querySelector('#nz-in').value.trim().split(/\s+/).map(Number).filter(Number.isFinite);
+    const o=nb.querySelector('[data-k=o]');
+    if(new Set(v).size!==v.length||v.length<2){o.innerHTML='<div class="res bad">Necesito al menos dos números distintos.</div>';return;}
+    const sorted=[...v].sort((a,b)=>a-b),bits=bitLen(v.length);
+    o.innerHTML=`<table class="tbl"><tr><th>valor</th><th>índice</th><th>binario (${bits} bits)</th></tr>${v.map(x=>{const r=sorted.indexOf(x);return `<tr><td>${x}</td><td>${r}</td><td>${r.toString(2).padStart(bits,'0')}</td></tr>`;}).join('')}</table>`;
+    if(v.length>=3)markDone('m6.norm');
+  };
+  const s2=sec(root,'Mira cómo trabaja el radix','<p>Pulsa «Ver solución». Con pocos contenedores verás el índice en binario sobre cada barra.</p>');
+  const tabs=el('div','tabs');s2.append(tabs);
+  let n=8;
+  const sim=makeSim(s2,{onScriptEnd:()=>markDone('m6.demo')});
+  const nw=()=>sim.load({a:randList(n),goal:'sorted',solver:radix,showBin:n<=16});
+  const bs=[];
+  [5,8,16,100].forEach(k=>{const b=el('button','tab',k+' números');b.type='button';b.onclick=()=>{n=k;bs.forEach(x=>x.setAttribute('aria-pressed',x===b));nw();};bs.push(b);tabs.append(b);});
+  bs[1].setAttribute('aria-pressed','true');nw();
+  sec(root,'¿Cuántos movimientos salen?','<p>Medido en tu navegador con listas aleatorias:</p>');
+  compare(root.lastChild,[['radix',100],['radix',500]]);
+  root.lastChild.append(el('p','','El radix suele quedar en un aprobado cómodo, pero no llega a la nota máxima. Para eso existe la siguiente misión.'));
+  quiz(root,'m6',[
+    {q:'¿Para qué se normaliza antes del radix?',o:['Para que el programa sea más rápido','Para trabajar con índices 0…n-1: sin negativos y con las pasadas determinadas por n','Para eliminar duplicados','Porque lo pide la Norma'],a:1,e:'Con los valores originales los negativos y los números grandes complicarían los bits.'},
+    {q:'Con 100 números, ¿cuántas pasadas (bits) hace como máximo?',o:['5','7','10','100'],a:1,e:'El mayor índice es 99, que en binario necesita 7 bits.'},
+    {q:'En una pasada, ¿qué haces con el elemento de arriba cuyo bit actual es 0?',o:['ra','pb','sa','rra'],a:1,e:'Los de bit 0 se van a B; los de bit 1 giran con <code>ra</code>.'},
+    {q:'¿Un radix simple llega a la nota máxima con 100 números?',o:['Sí, siempre','No, suele rondar los mil movimientos','Sólo si hay pocos duplicados','Sólo con rr'],a:1,e:'Cada pasada cuesta más de n movimientos, así que el total no baja de lo que pide la nota máxima.'}
+  ]);
+  foot(root,6);
+}});
+
+// ---------- Misión 7 ----------
+function costGame(root){
+  const box=el('div','tool');root.append(box);
+  let st,streak=0;
+  function round(){
+    const v=randList(9),A=v.slice(0,6),bs=v.slice(6).sort((x,y)=>y-x),r=rnd(3);
+    st={A,B:bs.slice(r).concat(bs.slice(0,r)),picked:null};draw();
+  }
+  function draw(){
+    const all=[...st.A,...st.B].sort((a,b)=>a-b),rank=new Map(all.map((x,i)=>[x,i])),N=all.length;
+    box.innerHTML=`<p class="lbl">Aciertos: ${Math.min(streak,3)}/3 · Pulsa el contenedor de A más barato de pasar a B.</p>
+    <div class="stacks"><div class="col"><h4><span>Muelle A</span><span>↑ cima</span></h4><div class="stack" data-k="a">${barsHTML(st.A,rank,N,0,!st.picked)}</div></div>
+    <div class="col"><h4><span>Muelle B (de mayor a menor, en círculo)</span></h4><div class="stack">${barsHTML(st.B,rank,N,0)}</div></div></div><div data-k="r"></div>`;
+    box.querySelectorAll('button.bar').forEach(b=>{b.onclick=()=>pick(+b.dataset.i);});
+    if(st.picked!=null)result();
+  }
+  function pick(i){st.picked=i;const c=costsAtoB(st.A,st.B),min=Math.min(...c.map(x=>x.p.c));if(c[i].p.c===min){streak++;if(streak>=3)markDone('m7.cost');}else{streak=0;toast(pickOne(WRONG));fail();}draw();}
+  const how={rr:'rr (ambas suben)',rrr:'rrr (ambas bajan)',ra_rrb:'A sube, B baja',rra_rb:'A baja, B sube'};
+  function result(){
+    const c=costsAtoB(st.A,st.B),min=Math.min(...c.map(x=>x.p.c)),ok=c[st.picked].p.c===min,r=box.querySelector('[data-k=r]');
+    r.innerHTML=`<div class="res ${ok?'good':'bad'}"><b>${ok?'✔ Correcto':'No era ese'}</b> · el coste mínimo es ${min}.</div>
+    <div class="scroll"><table class="tbl"><tr><th>contenedor</th><th>va sobre…</th><th>coste</th><th>cómo</th></tr>${c.map(x=>`<tr class="${x.p.c===min?'best':''}"><td>${x.v}</td><td>${x.tv}</td><td>${x.p.c}</td><td>${how[x.p.k]}</td></tr>`).join('')}</table></div>
+    <p class="lbl">«Va sobre…» es el valor de B que debe quedar en la cima: el mayor que sea menor que el contenedor (o el máximo de B si no hay ninguno).</p><div class="row"><button class="btn" type="button">Otra ronda</button></div>`;
+    r.querySelector('button').onclick=round;
+  }
+  round();
+}
+missions.push({id:'m7',name:'Turk',sub:'Elegir siempre el más barato',total:6,render(root){
+  head(root,7,'COMUNICADO DE LA DIRECCIÓN. CADA MANIOBRA DE GRÚA RETRASA EL ENVÍO Y LOS GAMERS ESPERAN CON EL MANDO EN LA MANO. SE RUEGA CALCULAR EL COSTE DE CADA PIEZA Y ELEGIR SIEMPRE LA MÁS BARATA. <i>Es el único momento de tu vida en que lo barato sale bien.</i>');
+  sec(root,'Visión general',`<p>Tres fases: <b>1)</b> manda casi todo a B eligiendo en cada paso el contenedor más barato y manteniendo B ordenada de mayor a menor; <b>2)</b> ordena los 3 que quedan en A; <b>3)</b> devuelve de B a A, otra vez el más barato, colocando cada uno sobre su sucesor. Al final, gira A hasta dejar el menor arriba.</p>
+  ${term('Turk','Apodo con el que la comunidad de 42 conoce a este algoritmo. No es un nombre académico: importa que funcione y cuente pocos movimientos.')}
+  ${term('coste','Número de instrucciones para colocar un contenedor: subirlo en A, subir su destino en B y hacer el <code>pb</code>.')}`);
+  sec(root,'En detalle: cómo se calcula el coste',`<p>Si el contenedor está en la posición <code>i</code> de A (n elementos) y su destino en la posición <code>j</code> de B (m elementos), subirlos cuesta <code>i</code> y <code>j</code> con giros hacia arriba, o <code>n-i</code> y <code>m-j</code> hacia abajo. Si ambos giran en el <b>mismo sentido</b>, <code>rr</code> o <code>rrr</code> los mueve a la vez y el coste es el <b>máximo</b>, no la suma. Pruebas las cuatro combinaciones y te quedas con la menor.</p>`);
+  sec(root,'Juego: ¿cuál es el más barato?');costGame(root.lastChild);
+  const s=sec(root,'Mira cómo trabaja el Turk','<p>Pulsa «Ver solución». Compara los movimientos con los del radix para la misma cantidad.</p>');
+  const tabs=el('div','tabs');s.append(tabs);
+  let n=10;
+  const sim=makeSim(s,{onScriptEnd:()=>markDone('m7.demo')});
+  const nw=()=>sim.load({a:randList(n),goal:'sorted',solver:turk});
+  const bs=[];
+  [6,10,20,100].forEach(k=>{const b=el('button','tab',k+' números');b.type='button';b.onclick=()=>{n=k;bs.forEach(x=>x.setAttribute('aria-pressed',x===b));nw();};bs.push(b);tabs.append(b);});
+  bs[1].setAttribute('aria-pressed','true');nw();
+  sec(root,'Radix contra Turk','<p>Mismos tamaños, listas aleatorias:</p>');
+  compare(root.lastChild,[['radix',100],['turk',100],['radix',500],['turk',500]]);
+  quiz(root,'m7',[
+    {q:'En la fase 1, ¿cómo se mantiene B?',o:['De menor a mayor','De mayor a menor (como círculo)','Sin orden','Con los pares arriba'],a:1,e:'Cada contenedor entra sobre el mayor valor que sea menor que él, o sobre el máximo si es el nuevo mínimo.'},
+    {q:'¿Por qué se usan <code>rr</code> y <code>rrr</code>?',o:['Porque son obligatorias','Porque giran las dos pilas con una sola instrucción y ahorran movimientos','Porque ordenan solas','Porque evitan usar B'],a:1,e:'Dos giros en el mismo sentido cuestan uno si los haces a la vez.'},
+    {q:'Al devolver un número de B a A, ¿dónde debe quedar?',o:['Al fondo de A','Justo encima de su sucesor: el menor valor de A que sea mayor que él (o el mínimo de A si no hay ninguno)','En la cima siempre','En medio de A'],a:1,e:'Así A se mantiene ordenada en círculo y sólo falta un giro final.'},
+    {q:'Cuando B queda vacía, ¿qué falta?',o:['Nada','Girar A hasta dejar el menor arriba','Un sa','Repetir el algoritmo'],a:1,e:'A está ordenada pero rotada: un <code>ra</code> o <code>rra</code> repetido (el que menos pasos necesite) la deja bien.'}
+  ]);
+  foot(root,7);
+}});
+
+// ---------- Misión 8 ----------
+missions.push({id:'m8',name:'Prueba de fuego',sub:'Optimización y pruebas',total:12,render(root){
+  head(root,8,'ÚLTIMO AVISO. INSPECCIÓN FINAL: QUINIENTAS PIEZAS. SI SALE BIEN, GTA VI EN PC EN 8K PARA TODOS. SI SALE MAL, MILLONES DE GAMERS LO VERÁN EN PIXEL ART Y TÚ, PREGUNTÁNDOLE A LA IA POR QUÉ NO FUNCIONA TU push_swap. <i>No te presiono. El medidor de arriba, sí.</i>');
+  sec(root,'Visión general',`<p>Dos tipos de prueba: <b>de robustez</b> (argumentos raros, errores, memoria) y <b>de rendimiento</b> (contar movimientos con 100 y 500 números y comprobar que ordenan). Simula el segundo aquí y lleva la lista de comprobaciones a tu terminal.</p>`);
+  const s=sec(root,'Simulador de pruebas');
+  const box=el('div','tool',`<div class="row"><label class="lbl" for="ft-n">Tamaño</label><select id="ft-n" class="sel"><option value="100">100 números</option><option value="500">500 números</option></select><label class="lbl" for="ft-a">Algoritmo</label><select id="ft-a" class="sel"><option value="turk">Turk</option><option value="radix">Radix</option></select><button class="btn" type="button">Lanzar pruebas</button></div><div class="stats" data-k="o" aria-live="polite"></div>`);
+  s.append(box);
+  const btn=box.querySelector('button'),o=box.querySelector('[data-k=o]');
+  btn.onclick=()=>{
+    const n=+box.querySelector('#ft-n').value,a=box.querySelector('#ft-a').value;
+    btn.disabled=true;o.innerHTML='<span class="lbl">Calculando…</span>';
+    setTimeout(()=>{o.innerHTML=statHTML(`${a==='turk'?'Turk':'Radix'} · ${n} números`,n,measure(a,n,n===100?10:3));btn.disabled=false;},40);
+  };
+  const s2=sec(root,'Comandos para tu terminal',code(`ARG=$(shuf -i 1-1000 -n 100 | tr '\\n' ' ')
+./push_swap $ARG | wc -l          # cuenta las instrucciones
+./push_swap $ARG | ./checker $ARG # tu checker del bonus, o el que te faciliten
+valgrind --leak-check=full ./push_swap $ARG`));
+  const cp=el('button','btn ghost','Copiar comandos');cp.type='button';cp.style.alignSelf='flex-start';
+  cp.onclick=()=>{const t=s2.querySelector('code').textContent;try{navigator.clipboard.writeText(t).then(()=>toast('Copiado'),()=>toast('Selecciona y copia a mano'));}catch(e){toast('Selecciona y copia a mano');}};
+  s2.append(cp);
+  const items=['<code>./push_swap</code> sin argumentos no imprime nada','<code>./push_swap "3 1 2"</code> (un único argumento entre comillas) funciona','Una letra o un signo suelto da <code>Error</code> por stderr','Un duplicado da <code>Error</code>','2147483648 y −2147483649 dan <code>Error</code>','Una lista ya ordenada no imprime nada','3 números: dentro del tope del subject','5 números: dentro del tope del subject','100 números: movimientos medidos y checker en OK','500 números: movimientos medidos y checker en OK','Sin fugas con <code>valgrind</code>','<code>norminette</code> sin errores y <code>make</code> sin relink ni warnings'];
+  const s3=sec(root,'Lista de comprobaciones');
+  const ck=el('div','checks');
+  items.forEach((t,i)=>{
+    const id='m8.c'+i,l=el('label','',`<input type="checkbox"><span>${t}</span>`),c=l.querySelector('input');
+    c.checked=!!progress.done[id];c.onchange=()=>setDone(id,c.checked);ck.append(l);
+  });
+  s3.append(ck);
+}});
+
+// ---------- Arranque ----------
+(function(){
+  const g=document.getElementById('scene');if(!g)return;
+  const u=6,B=(c,x,y,w,h,o)=>`<rect fill="var(--${c})" x="${x*u}" y="${y*u}" width="${w*u}" height="${h*u}"${o?` opacity="${o}"`:''}/>`;
+  const cont=(x,y,w,c,lab,s)=>{const X=x*u,Y=y*u,W=w*u,H=3*u;return B(c,x,y,w,3)+`<rect x="${X}" y="${Y}" width="${W}" height="${H}" fill="url(#rib)"/><rect x="${X}" y="${Y}" width="${W}" height="2" fill="#fff" opacity=".28"/><rect x="${X+1}" y="${Y+1}" width="${W-2}" height="${H-2}" fill="none" stroke="rgba(0,0,0,.5)" stroke-width="2"/>`+txt(lab,X+Math.floor((W-(11*s))/2),Y+Math.floor((H-5*s)/2),s,'rgba(255,255,255,.9)');};
+  const cs=['c1','c2','c3','c4'],labs=['GPU','RAM'];
+  let o='<defs><pattern id="rib" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="2" height="6" fill="rgba(0,0,0,.2)"/></pattern></defs>';
+  o+=B('sk1',0,0,200,6)+B('sk2',0,6,200,6)+B('sk3',0,12,200,6);
+  o+=B('hazard',168,1,4,1)+B('hazard',167,2,6,4)+B('hazard',168,6,4,1)+B('paper',168,2,1,1,.5);
+  o+='<g class="cl">'+[[8,2,9],[44,4,6],[96,1,10],[130,4,7],[22,5,5]].map(([x,y,w])=>B('cloud',x,y,w,1,.9)+B('cloud',x+1,y-1,w-3,1,.9)).join('')+'</g>';
+  [[0,11,10,6],[11,9,6,8],[18,12,14,5],[34,10,8,7],[44,12,10,5],[100,11,12,6],[114,9,5,8],[121,12,16,5],[150,10,9,7],[160,12,16,5],[176,9,6,8],[184,11,12,6]].forEach(([x,y,w,h])=>o+=B('steel-d',x,y,w,h,.3));
+  o+=B('wt1',60,17,100,7)+B('wt2',60,17,100,1);
+  o+='<g class="w1">'+Array.from({length:12},(_,k)=>B('wt2',48+k*12,19,4,1)+B('cloud',51+k*12,18,2,1,.35)).join('')+'</g>';
+  o+='<g class="w2">'+Array.from({length:12},(_,k)=>B('wt3',54+k*12,21,5,1)+B('wt3',48+k*12,23,3,1)).join('')+'</g>';
+  // buque
+  o+=B('hull',78,13,70,4)+B('hulld',78,16,70,1)+B('hull',74,14,4,3)+B('hulld',74,16,4,1)+B('hull',148,12,3,5)+B('hulld',148,16,3,1)+B('paper',78,13,70,1,.5);
+  o+=B('paper',139,6,9,7)+B('hulld',139,6,9,1)+B('led-a',140,8,2,1)+B('led-a',143,8,2,1)+B('led-a',146,8,1,1)+B('steel-d',143,2,1,4)+'<g class="bl">'+B('led-r',143,1,1,1)+'</g>';
+  const sh=[1,2,2,1,2,2,1,2];sh.forEach((n,i)=>{for(let k=0;k<n;k++)o+=cont(80+i*7,10-3*k,7,cs[(i+k)%4],labs[(i+k)%2],2);});
+  // muelles
+  o+=B('conc',0,16,68,8)+B('hazard',0,16,68,1)+B('concd',66,17,2,7)+B('steel-d',64,17,2,2)+B('conc',154,16,46,8)+B('hazard',154,16,46,1)+B('concd',154,17,2,7)+B('steel-d',156,17,2,2);
+  [3,3,2,3,1,2].forEach((n,i)=>{for(let k=0;k<n;k++)o+=cont(4+i*7,13-3*k,7,cs[(i*2+k)%4],labs[(i+k)%2],2);});
+  [2,3,2,1].forEach((n,i)=>{for(let k=0;k<n;k++)o+=cont(158+i*7,13-3*k,7,cs[(i+k+1)%4],labs[(i+k+1)%2],2);});
+  o+=B('hazard',188,10,9,6)+B('hazard-d',188,10,9,1)+B('led-a',189,11,3,2)+B('steel-d',193,2,1,8)+B('steel-d',191,3,5,1)+'<g class="bl">'+B('led-r',193,1,1,1)+'</g>';
+  // grúa pórtico
+  o+=B('hazard',54,5,2,11)+B('hazard',64,5,2,11)+B('hazard-d',55,5,1,11)+B('hazard-d',65,5,1,11)+B('steel-d',54,10,12,1)+B('steel-d',56,12,8,1)+B('steel-d',54,14,12,1);
+  o+=B('hazard',44,3,80,1)+B('hazard',44,5,80,1)+B('hazard-d',44,6,80,1);
+  for(let x=44;x<124;x+=3)o+=B('hazard-d',x,4,1,1);
+  o+=B('steel-d',44,3,4,3)+B('hazard',55,0,8,3)+B('hazard-d',55,3,8,1)+B('led-a',56,1,3,1)+'<g class="bl">'+B('led-r',59,-1,1,1)+B('led-r',123,2,1,1)+'</g>';
+  o+=B('steel-d',68,6,4,1);
+  o+='<g class="hang"><rect fill="var(--steel)" x="'+(70*u-1)+'" y="'+(7*u)+'" width="2" height="'+(2*u)+'"/><rect fill="var(--steel)" x="'+(67*u)+'" y="'+(7*u)+'" width="2" height="'+(2*u)+'"/>'+B('steel-d',65,9,10,1)+cont(66,10,8,'c3','GPU',3)+'</g>';
+  g.innerHTML=o;
+})();
+const h=/^#m(\d)$/.exec(location.hash);
+go(h&&missions[+h[1]]?+h[1]:Math.min(progress.last||0,missions.length-1));
+window.addEventListener('hashchange',()=>{const m=/^#m(\d)$/.exec(location.hash);if(m&&missions[+m[1]]&&+m[1]!==cur)go(+m[1]);});
+})();
+</script>
