@@ -13,3 +13,13 @@
 - Stack A/B simulator with a crane, C coding challenges and quizzes.
 - A gamer-tears meter with a face that reacts to your mistakes.
 - Single page (`index.html`), no dependencies or setup. Progress is saved in your browser.
+
+---
+
+## Créditos / Credits
+
+**ES** · Creado por **David Costa Pradillo (Cos)**, estudiante de 42 Madrid. GitHub: [@coscosgram](https://github.com/coscosgram).
+Proyecto `push_swap` de 42 © 42 School; este juego es un material de estudio no oficial.
+
+**EN** · Created by **David Costa Pradillo (Cos)**, 42 Madrid student. GitHub: [@coscosgram](https://github.com/coscosgram).
+The `push_swap` project belongs to 42 School; this game is unofficial study material.
