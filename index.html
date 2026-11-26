@@ -267,7 +267,6 @@ button.bar{cursor:pointer;min-height:30px;flex:0 0 auto}
       <svg width="48" height="40" viewBox="0 0 12 10" aria-hidden="true"><rect x="0" y="0" width="5" height="3" fill="var(--c1)"/><rect x="6" y="0" width="5" height="3" fill="var(--c2)"/><rect x="0" y="4" width="11" height="3" fill="var(--c3)"/><rect x="0" y="8" width="12" height="2" fill="var(--hazard)"/><rect x="0" y="0" width="5" height="1" fill="rgba(255,255,255,.35)"/><rect x="6" y="0" width="5" height="1" fill="rgba(255,255,255,.35)"/><rect x="0" y="4" width="11" height="1" fill="rgba(255,255,255,.35)"/></svg>
       <div><h1>Muelle Push Swap</h1><small>El sueño de los gamers depende de ti, hazlo realidad</small></div>
     </div>
-    <div class="prog"><div><span id="rank">Aprendizaje</span><span id="xp">0 XP</span></div><div class="meter"><i id="meter"></i></div></div>
   </header>
   <div class="harbor" aria-hidden="true"><svg id="scene" viewBox="0 0 1200 144" preserveAspectRatio="xMidYMax slice"></svg></div>
   <section class="track riv" id="track" aria-label="Estado del envío">
@@ -623,9 +622,8 @@ function chrome(){
     if(i===cur)sum.innerHTML=`<span class="n">${i}</span><span class="t">${m.name}<small>${m.sub}</small></span><span class="st">${d}/${m.total}</span><span class="car">Misiones ▾</span>`;
   });
   const pct=tot?dn/tot:0;
-  document.getElementById('meter').style.width=Math.round(pct*100)+'%';
-  document.getElementById('xp').textContent=dn*10+' XP';gauges();
-  document.getElementById('rank').textContent=pct>=1?'Dirección del muelle':pct>=.6?'Supervisión':pct>=.25?'Operación':'Aprendizaje';
+  
+  gauges();
 }
 function setDone(id,v){
   if(v){
