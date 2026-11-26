@@ -1,3 +1,8 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Muelle Push Swap</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400;600&family=VT323&family=Special+Elite&family=JetBrains+Mono:wght@400;600&display=swap">
@@ -31,6 +36,8 @@
   --sk1:#1b1a24;--sk2:#2a2029;--sk3:#3d2a2c;--wt1:#2b3f3e;--wt2:#22302f;--wt3:#1b2828;--conc:#3a3d40;--concd:#2d3033;--hull:#8e3322;--hulld:#64241a;--cloud:#3d3544;
   --bar-l:50%;--bar-fg:#101214;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+img{max-width:100%}
 body,button,input,select{font-variant-ligatures:none}
 *,*::before,*::after{border-radius:0!important}
 body{background:var(--bg);background-image:radial-gradient(var(--grain) 1px,transparent 1.5px);background-size:8px 8px;color:var(--ink);font:17px/1.5 var(--f-body);padding-block:12px 60px;
@@ -248,10 +255,12 @@ button.bar{cursor:pointer;min-height:30px;flex:0 0 auto}
   .face{width:76px;height:76px}.tears{height:50px}.tr-icon{width:72px;height:72px}.tr-icon svg{width:54px;height:54px}
   .tlabels{margin-left:90px}.tmarks{margin:8px 10px 4px 90px}.mk svg{width:22px;height:22px}.mk.now svg{width:32px;height:32px}
   .radio{grid-template-columns:1fr}.spk{width:44px}
-  .stacks{gap:10px}.brand h1{font-size:12px}
+  .stacks{gap:10px}.brand h1{font-size:15px;text-shadow:2px 2px 0 var(--hazard)}
 }
 @media(prefers-reduced-motion:reduce){.tfill{transition:none}.tfill::after,.tdrop,.led,.spk .wv,.face.cry,.harbor *{animation:none!important}.track.hit{animation:none}.meter i,.gantry i{transition:none}.stacks.shake{animation:none}}
 </style>
+</head>
+<body>
 <div class="wrap">
   <header class="top riv">
     <div class="brand">
@@ -1084,3 +1093,5 @@ go(h&&missions[+h[1]]?+h[1]:Math.min(progress.last||0,missions.length-1));
 window.addEventListener('hashchange',()=>{const m=/^#m(\d)$/.exec(location.hash);if(m&&missions[+m[1]]&&+m[1]!==cur)go(+m[1]);});
 })();
 </script>
+</body>
+</html>
