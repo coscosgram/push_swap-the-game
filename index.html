@@ -44,7 +44,6 @@
   --bar-l:50%;--bar-fg:#101214;color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-img{max-width:100%}
 body,button,input,select{font-variant-ligatures:none}
 *,*::before,*::after{border-radius:0!important}
 body{background:var(--bg);background-image:radial-gradient(var(--grain) 1px,transparent 1.5px);background-size:8px 8px;color:var(--ink);font:17px/1.5 var(--f-body);padding-block:12px 60px;
@@ -559,7 +558,7 @@ function makeSim(root,o={}){
     l.forEach(op=>{const b=el('button','op',op);b.type='button';b.onclick=()=>manual(op);d.append(b);});
     g.append(d);q('ops').append(g);
   });
-  let init={a:[],b:[]},st,hist=[],moves=0,par=null,goal='sorted',solver=null,script=null,pos=0,timer=null,playing=false,solved=false,ended=false,rank=new Map(),N=1,bits=0,showBin=false;
+  let init={a:[],b:[]},st,hist=[],moves=0,par=null,goal='sorted',solver=null,penal=false,script=null,pos=0,timer=null,playing=false,solved=false,ended=false,rank=new Map(),N=1,bits=0,showBin=false;
   const goalMet=()=>goal==='sorted'?(st.b.length===0&&isSorted(st.a)):(eq(st.a,goal.a)&&eq(st.b,goal.b||[]));
   const status=(m,c)=>{const s=q('status');s.textContent=m||'';s.className='status'+(c?' '+c:'');};
   function draw(){
@@ -573,7 +572,7 @@ function makeSim(root,o={}){
   function stopPlay(){playing=false;clearTimeout(timer);updPlay();}
   function resetState(){stopPlay();st={a:[...init.a],b:[...init.b]};hist=[];moves=0;solved=false;script=null;pos=0;ended=false;status('');draw();}
   function load(p){
-    init={a:[...p.a],b:[...(p.b||[])]};par=p.par||null;goal=p.goal||'sorted';solver=p.solver||null;showBin=!!p.showBin;
+    init={a:[...p.a],b:[...(p.b||[])]};par=p.par||null;goal=p.goal||'sorted';solver=p.solver||null;showBin=!!p.showBin;penal=false;
     const all=[...init.a,...init.b].sort((x,y)=>x-y);rank=new Map(all.map((v,i)=>[v,i]));N=all.length;bits=bitLen(N);
     q('play').hidden=!solver;q('par').textContent=par?` · meta ≤ ${par}`:'';q('speed').value=N>=50?'12':'300';resetState();
   }
@@ -583,7 +582,7 @@ function makeSim(root,o={}){
     hist.push(op);moves++;draw();
     if(!solved&&goalMet()){
       solved=true;status(`✔ Resuelto en ${moves} movimientos`+(par?(moves<=par?' · dentro de la meta':` · la meta era ${par}`):''),'ok');
-      if(par&&moves>par){toast(pickOne(OVER));fail();}
+      if(par&&moves>par&&!penal){penal=true;toast(pickOne(OVER));fail();}
       o.onSolve&&o.onSolve({moves,par});
     }
   }
@@ -767,7 +766,7 @@ void add_back(t_node **lst, t_node *new)  // BIEN
         last = last->next;
     last->next = new;
 }`)}
-  <p>Se llama con <code>add_back(&amp;a, new_node(7));</code>. En tu código real, la Norma pide tabulaciones y declarar y asignar en líneas distintas.</p>`);
+  <p>Se llama con <code>add_back(&amp;a, new_node(7));</code>. En tu código real, la Norma pide tabulaciones, declarar y asignar en líneas distintas y no dejar comentarios dentro de las funciones.</p>`);
   quiz(root,'m2',[
     {q:'Completa <code>new_node</code>: ¿qué va en el hueco?',code:`t_node *new_node(int value)
 {
@@ -801,13 +800,20 @@ void add_back(t_node **lst, t_node *new)  // BIEN
 function checkArgs(str){
   const t=str.trim();
   if(!t)return{ok:true,none:true,msg:'Sin argumentos: no imprime nada y devuelve el control a la terminal.'};
-  const tok=t.split(/\s+/),seen=new Set(),nums=[];
-  for(const x of tok){
-    if(!/^[+-]?\d+$/.test(x))return{ok:false,msg:`«${esc(x)}» no es un entero válido (sólo dígitos con un signo opcional).`};
-    const v=BigInt(x);
-    if(v<-2147483648n||v>2147483647n)return{ok:false,msg:`«${esc(x)}» no cabe en un int (de −2147483648 a 2147483647).`};
-    const k=v.toString();if(seen.has(k))return{ok:false,msg:`«${esc(x)}» está repetido (+5 y 5 son el mismo número).`};
-    seen.add(k);nums.push(Number(v));
+  // como la shell: cada argumento puede ir entre comillas; cada argumento se parte en palabras (ft_split)
+  const args=[];let m;const re=/"([^"]*)"|'([^']*)'|(\S+)/g;
+  while((m=re.exec(t)))args.push(m[1]!=null?m[1]:m[2]!=null?m[2]:m[3]);
+  const seen=new Set(),nums=[];
+  for(const a of args){
+    const words=a.trim().split(/\s+/).filter(Boolean);
+    if(!words.length)return{ok:false,msg:'Hay un argumento vacío (<code>""</code>). Un argumento vacío o sólo con espacios es un Error.'};
+    for(const x of words){
+      if(!/^[+-]?\d+$/.test(x))return{ok:false,msg:`«${esc(x)}» no es un entero válido (sólo dígitos con un signo opcional).`};
+      const v=BigInt(x);
+      if(v<-2147483648n||v>2147483647n)return{ok:false,msg:`«${esc(x)}» no cabe en un int (de −2147483648 a 2147483647).`};
+      const k=v.toString();if(seen.has(k))return{ok:false,msg:`«${esc(x)}» está repetido (+5 y 5 son el mismo número).`};
+      seen.add(k);nums.push(Number(v));
+    }
   }
   return isSorted(nums)?{ok:true,msg:'Válido y ya ordenado: no imprime nada.'}:{ok:true,msg:'Válido: pasa a la fase de ordenar.'};
 }
@@ -828,7 +834,7 @@ missions.push({id:'m3',name:'Aduana',sub:'Parseo y errores',total:5,render(root)
     if(seenOk&&seenErr)markDone('m3.aduana');
   }
   box.querySelector('#ad-go').onclick=run;inp.onkeydown=e=>{if(e.key==='Enter')run();};
-  [['1 2 2','duplicado'],['1 a 3','letra'],['2147483648','fuera de rango'],['+5 -3 0','con signos'],['--5','doble signo'],['','sin argumentos'],['1 2 3','ya ordenado']].forEach(([v,l])=>{
+  [['"3 1 2"','entre comillas'],['""','argumento vacío'],['1 2 2','duplicado'],['1 a 3','letra'],['2147483648','fuera de rango'],['+5 -3 0','con signos'],['--5','doble signo'],['','sin argumentos'],['1 2 3','ya ordenado']].forEach(([v,l])=>{
     const b=el('button','tab',l);b.type='button';b.onclick=()=>{inp.value=v;run();};box.querySelector('#ad-pre').append(b);
   });
   quiz(root,'m3',[
@@ -878,7 +884,7 @@ void sa(t_node **a)
 }`)}
   <p>Dibuja los nodos en papel y sigue cada línea: es el mejor ejercicio para entender los punteros.</p>`);
   quiz(root,'m4',[
-    {q:'A <code>push</code> le falta la línea <code>node->next = *dst;</code>. ¿Qué efecto tiene?',o:['Ninguno','El nodo movido no apunta al resto de la pila destino, que queda desconectada (se pierden nodos)','Se duplica el nodo','El programa imprime Error'],a:1,e:'Sin esa línea el nodo conserva su antiguo <code>next</code> y la pila destino queda colgando: pierdes nodos y memoria.'},
+    {q:'A <code>push</code> le falta la línea <code>node->next = *dst;</code>. ¿Qué efecto tiene?',o:['Ninguno','El nodo movido no apunta al resto de la pila destino, que queda desconectada (se pierden nodos)','Se duplica el nodo','El programa imprime Error'],a:1,e:'Sin esa línea el nodo conserva su antiguo <code>next</code>, que apunta a la pila de origen, y la pila destino queda sin enlazar: pierdes nodos (fuga de memoria) y las dos pilas acaban compartiendo nodos.'},
     {q:'Completa <code>rotate</code>:',code:`static void rotate(t_node **lst)
 {
     t_node *first;
@@ -1044,7 +1050,7 @@ missions.push({id:'m8',name:'Prueba de fuego',sub:'Optimización y pruebas',tota
     btn.disabled=true;o.innerHTML='<span class="lbl">Calculando…</span>';
     setTimeout(()=>{o.innerHTML=statHTML(`${a==='turk'?'Turk':'Radix'} · ${n} números`,n,measure(a,n,n===100?10:3));btn.disabled=false;},40);
   };
-  const s2=sec(root,'Comandos para tu terminal',code(`ARG=$(shuf -i 1-1000 -n 100 | tr '\\n' ' ')
+  const s2=sec(root,'Comandos para tu terminal',code(`ARG=$(seq -1000 1000 | shuf -n 100 | tr '\\n' ' ')   # cambia 100 por 500
 ./push_swap $ARG | wc -l          # cuenta las instrucciones
 ./push_swap $ARG | ./checker $ARG # tu checker del bonus, o el que te faciliten
 valgrind --leak-check=full ./push_swap $ARG`));
